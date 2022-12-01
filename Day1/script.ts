@@ -1,28 +1,29 @@
 import { input } from "./input";
 
-const calorieArrays: string[][] = input
+const calorieTotals: number[] = input
   // Split by empty lines
   .split("\n\n")
-  // Map each block of values to an array of string values
-  .map((x) => x.split("\n"));
+  // Map each block of values to their sum
+  .map((x) => {
+    const stringValues: string[] = x.split("\n");
+    const numberValues: number[] = stringValues.map((x) => parseInt(x));
+    const sum: number = numberValues.reduce((a, b) => a + b, 0);
+    return sum;
+  });
 
-const totals: number[] = [];
+// Largest value
+const maxTotal: number = Math.max(...calorieTotals);
+console.log(maxTotal);
 
-for (const item of calorieArrays) {
-  const calorieArray: number[] = item.map((x) => parseInt(x));
-  const sum: number = calorieArray.reduce((a, b) => a + b, 0);
-  totals.push(sum);
+function sumOfLargest(numValues: number) {
+  // Largest to smallest
+  const sortedTotals = calorieTotals.sort((a, b) => {
+    return b - a;
+  });
+
+  // Sum of the provided number of values
+  return sortedTotals.slice(0, numValues).reduce((a, b) => a + b, 0);
 }
 
-const maxTotal: number = Math.max(...totals);
-console.log(maxTotal)
-
-// Largest to smallest
-const sortedTotals = totals.sort((a, b) => {
-  return b - a;
-});
-// Largest three values
-const topThree = sortedTotals.slice(0, 3);
-
-const sumTopThree = topThree.reduce((a, b) => a + b, 0);
-console.log(sumTopThree);
+// Sum of largest three values
+console.log(sumOfLargest(3));
