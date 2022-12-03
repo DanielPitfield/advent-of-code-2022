@@ -3,9 +3,9 @@ import { input } from "./input";
 const rucksacks = input.split("\n");
 
 // Which letter (case sensitive) is in both compartments?
-function findCommonItem(firstCompartment: string[], secondCompartment: string[]): string | null {
-  for (const item of firstCompartment) {
-    if (secondCompartment.some((x) => x === item)) {
+export function findCommonItem(compartments: string[][]): string | null {
+  for (const item of compartments[0]) {
+    if (compartments.every((x) => x.includes(item))) {
       return item;
     }
   }
@@ -18,7 +18,7 @@ function findCommonItem(firstCompartment: string[], secondCompartment: string[])
   a-z (1 to 26)
   A-Z (27 to 52)
 */
-function getItemPriority(item: string | null): number {
+export function getItemPriority(item: string | null): number {
   if (!item) {
     return 0;
   }
@@ -44,7 +44,7 @@ const rucksackPriorties = rucksacks.map((rucksack) => {
   const firstCompartment: string[] = items.slice(0, halfwayIndex);
   const secondCompartment: string[] = items.slice(halfwayIndex, items.length);
 
-  const commonItem = findCommonItem(firstCompartment, secondCompartment);
+  const commonItem = findCommonItem([firstCompartment, secondCompartment]);
 
   return getItemPriority(commonItem);
 });
