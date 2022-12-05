@@ -38,8 +38,10 @@ export function getInitialItemStacks(): string[][] {
   return itemStacks.map((stack) => stack.reverse());
 }
 
+type MoveConfig = { isMultipleMoveAllowed: false } | { isMultipleMoveAllowed: true };
+
 // The item stacks after each instruction from the data is applied
-export function getMovedItemStacks(isMultipleMoveAllowed: boolean): string[][] {
+export function getMovedItemStacks(moveConfig: MoveConfig): string[][] {
   const itemStacks = getInitialItemStacks();
   const instructions: string[] = instructionsData.split("\n");
 
@@ -56,7 +58,7 @@ export function getMovedItemStacks(isMultipleMoveAllowed: boolean): string[][] {
     // Remove items from stack and keep track of them
     const itemsToMove: string[] = itemStacks[stackNumberFrom - 1].splice(-numItems);
 
-    if (isMultipleMoveAllowed) {
+    if (moveConfig.isMultipleMoveAllowed) {
       // Can move the items (in the order that they currently are) all at once
       itemStacks[stackNumberTo - 1] = itemStacks[stackNumberTo - 1].concat(itemsToMove);
     } else {

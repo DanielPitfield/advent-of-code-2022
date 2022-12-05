@@ -1,4 +1,4 @@
 import { getMovedItemStacks, getTopItemMessage } from "./utils";
 
-const itemStacks = getMovedItemStacks(true);
+const itemStacks = getMovedItemStacks({ isMultipleMoveAllowed: true });
 console.log(getTopItemMessage(itemStacks));
