@@ -81,3 +81,35 @@ export function createFileSystem(): FileSystem {
 
   return fileSystem;
 }
+
+// The sum of the file sizes of every file within a directory (including files within any nested directories)
+export function getDirectoryTotalFileSize(directory: Directory): number[] {
+  let size: number = 0;
+  let accumulator: number = 0;
+
+  // The sum of every file size at the top level of the directory
+  const internalFileSizes: number[] = directory.files.map((file) => file.size);
+  const totalInternalFileSize: number = internalFileSizes.reduce((a, b) => a + b, 0);
+  size += totalInternalFileSize;
+
+  for (const nestedDirectory of directory.nestedDirectories) {
+    // Find the sum of every file size within the nested directory (recursion)
+    const [nestedDirectorySize, nestedDirectoryAccumulator] = getDirectoryTotalFileSize(nestedDirectory);
+    size += nestedDirectorySize;
+    accumulator += nestedDirectoryAccumulator;
+  }
+
+  accumulator += size;
+
+  // Return both values so that the nested function can recursively sum the file size (of every internal file or files within a nested directory)
+  return [size, accumulator];
+}
+
+export function getFileSystemDirectorySizes(fileSystem: FileSystem): number[] {
+  /*
+  The recursive function, getDirectoryTotalFileSize() requires that two values are returned, to allow for recursion
+  Once the recursion has finished, both of the values returned will be the same
+  Therefore only one of the values is needed
+  */
+  return fileSystem.map((directory) => getDirectoryTotalFileSize(directory)[0]);
+}
