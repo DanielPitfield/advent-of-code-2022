@@ -55,12 +55,19 @@ export function createFileSystem(): FileSystem {
     // directory folder
     if (line.split(" ")[0] === "dir" && isListingCurrentDirectory) {
       const newDirectoryName: string = line.split(" ").at(-1) ?? "";
-      const newDirectory: Directory = { name: newDirectoryName, files: [], nestedDirectories: [] };
 
-      const currentDirectoryIndex: number = fileSystem.findIndex(
-        (directory) => directory.name === currentDirectory.name
-      );
-      fileSystem[currentDirectoryIndex].nestedDirectories.push(newDirectory);
+      // Directory not yet within the nested directories of current directory
+      if (!currentDirectory.nestedDirectories.some((directory) => directory.name === newDirectoryName)) {
+        // Make the directory
+        const newDirectory: Directory = { name: newDirectoryName, files: [], nestedDirectories: [] };
+
+        // TODO: Might not be nested directory of root directory
+        const currentDirectoryIndex: number = fileSystem.findIndex(
+          (directory) => directory.name === currentDirectory.name
+        );
+        fileSystem[currentDirectoryIndex].nestedDirectories.push(newDirectory);
+      }
+
       continue;
     }
 
