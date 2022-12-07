@@ -1,7 +1,7 @@
 import { input } from "./input";
 
 type FileSystem = Directory[];
-type Directory = { name: string; files: File[]; nestedDirectories: Directory[] };
+type Directory = { parentDirectory?: Directory; name: string; files: File[]; nestedDirectories: Directory[] };
 type File = { name: string; size: number };
 
 export function createFileSystem(): FileSystem {
@@ -19,30 +19,31 @@ export function createFileSystem(): FileSystem {
       isListingCurrentDirectory = false;
       // Which directory to navigate to?
       const chosenDirectoryName: string = line.split(" ").at(-1) ?? "";
-      // What is the parentDirectory of the currentDirectory?
-      const parentDirectory: Directory | undefined = fileSystem.find((directory) =>
-        directory.nestedDirectories.includes(currentDirectory)
-      );
+
+      // Root directory
+      if (chosenDirectoryName === "/") {
+        const rootDirectory = { name: "/", files: [], nestedDirectories: [] };
+        fileSystem.push(rootDirectory);
+        currentDirectory = rootDirectory;
+        continue;
+      }
 
       // Move out one directory
-      if (chosenDirectoryName === ".." && parentDirectory) {
-        currentDirectory = parentDirectory;
+      if (chosenDirectoryName === ".." && currentDirectory.parentDirectory) {
+        currentDirectory = currentDirectory.parentDirectory;
         continue;
       }
 
-      // Otherwise, go directly to a named directory
-      const isDirectoryPresent: boolean = fileSystem.some((directory) => directory.name === chosenDirectoryName);
-
-      if (isDirectoryPresent) {
-        const existingDirectory: Directory = fileSystem.find((directory) => directory.name === chosenDirectoryName)!;
-        currentDirectory = existingDirectory;
+      // Move out to root directory
+      if (chosenDirectoryName === ".." && !currentDirectory.parentDirectory) {
+        currentDirectory = fileSystem.find(directory => directory.name === "/") ?? currentDirectory;
         continue;
       }
 
-      // No directory, make one
-      const newDirectory: Directory = { name: chosenDirectoryName, files: [], nestedDirectories: [] };
-      fileSystem.push(newDirectory);
-      currentDirectory = newDirectory;
+      // Move into a specified nested directory
+      currentDirectory =
+        currentDirectory.nestedDirectories.find((directory) => directory.name === chosenDirectoryName) ??
+        currentDirectory;
       continue;
     }
 
@@ -59,13 +60,14 @@ export function createFileSystem(): FileSystem {
       // Directory not yet within the nested directories of current directory
       if (!currentDirectory.nestedDirectories.some((directory) => directory.name === newDirectoryName)) {
         // Make the directory
-        const newDirectory: Directory = { name: newDirectoryName, files: [], nestedDirectories: [] };
+        const newDirectory: Directory = {
+          parentDirectory: currentDirectory,
+          name: newDirectoryName,
+          files: [],
+          nestedDirectories: [],
+        };
 
-        // TODO: Might not be nested directory of root directory
-        const currentDirectoryIndex: number = fileSystem.findIndex(
-          (directory) => directory.name === currentDirectory.name
-        );
-        fileSystem[currentDirectoryIndex].nestedDirectories.push(newDirectory);
+        // TODO: Add newDirectory to nestedDirectories of currentDirectory in fileSystem
       }
 
       continue;
@@ -75,8 +77,9 @@ export function createFileSystem(): FileSystem {
     const [size, name] = line.split(" ");
     const newFile: File = { name: name, size: parseInt(size) };
 
-    const currentDirectoryIndex: number = fileSystem.findIndex((directory) => directory.name === currentDirectory.name);
-    fileSystem[currentDirectoryIndex].files.push(newFile);
+    // TODO: Add newFile to currentDirectory.files in fileSystem
+
+
   }
 
   return fileSystem;
