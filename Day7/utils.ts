@@ -53,7 +53,7 @@ export function createFileSystem(): FileSystem {
     }
 
     // directory folder
-    if (!line.startsWith("$") && line.includes("dir") && isListingCurrentDirectory) {
+    if (line.split(" ")[0] === "dir" && isListingCurrentDirectory) {
       const newDirectoryName: string = line.split(" ").at(-1) ?? "";
       const newDirectory: Directory = { name: newDirectoryName, files: [], nestedDirectories: [] };
 
