@@ -43,11 +43,13 @@ export function createFileSystem(): FileSystem {
       const newDirectory: Directory = { name: chosenDirectoryName, files: [], nestedDirectories: [] };
       fileSystem.push(newDirectory);
       currentDirectory = newDirectory;
+      continue;
     }
 
     // ls command
     if (line.startsWith("$") && line.includes("ls")) {
       isListingCurrentDirectory = true;
+      continue;
     }
 
     // directory folder
@@ -59,6 +61,7 @@ export function createFileSystem(): FileSystem {
         (directory) => directory.name === currentDirectory.name
       );
       fileSystem[currentDirectoryIndex].nestedDirectories.push(newDirectory);
+      continue;
     }
 
     // file
