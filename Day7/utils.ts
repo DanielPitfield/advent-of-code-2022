@@ -1,118 +1,92 @@
-import { input } from "./input";
+// Creates a key from a given path of directory strings
+const createKeyFromPath = (path: string[]) => "/" + path.join("/");
 
-type FileSystem = Directory[];
-type Directory = { parentDirectory?: Directory; name: string; files: File[]; nestedDirectories: Directory[] };
-type File = { name: string; size: number };
+type Directories = Map<string, number>;
 
-export function createFileSystem(): FileSystem {
-  const fileSystem: FileSystem = [];
-  let currentDirectory: Directory = { name: "start", files: [], nestedDirectories: [] };
-  let isListingCurrentDirectory: boolean = false;
+// Parses the map of directories and their sizes from the input data
+export const parseInput = (input: string) => {
+  // Split the input data into individual lines
+  const lines = input.split("\n");
 
-  // The lines of the terminal output
-  const terminalOutputLines: string[] = input.split("\n");
+  // Create a map of directories...
+  const directories = new Map<string, number>() as Directories;
+  // ... and an array to store the current directory
+  let currentDirectory: string[] = [];
 
-  for (const line of terminalOutputLines) {
+  // For each line of the input:
+  lines.forEach((line) => {
     // cd command
     if (line.startsWith("$") && line.includes("cd")) {
-      // Not listing the files of a directory anymore, instead navigating to a new directory
-      isListingCurrentDirectory = false;
-      // Which directory to navigate to?
-      const chosenDirectoryName: string = line.split(" ").at(-1) ?? "";
+      const directoryName: string = line.split(" ").at(-1) ?? "";
 
-      // Root directory
-      if (chosenDirectoryName === "/") {
-        const rootDirectory = { name: "/", files: [], nestedDirectories: [] };
-        fileSystem.push(rootDirectory);
-        currentDirectory = rootDirectory;
-        continue;
+      // Back to root path
+      if (directoryName === "/") {
+        currentDirectory = [];
+        return;
       }
 
       // Move out one directory
-      if (chosenDirectoryName === ".." && currentDirectory.parentDirectory) {
-        currentDirectory = currentDirectory.parentDirectory;
-        continue;
+      if (directoryName === "..") {
+        currentDirectory.pop();
+        return;
       }
 
-      // Move out to root directory
-      if (chosenDirectoryName === ".." && !currentDirectory.parentDirectory) {
-        currentDirectory = fileSystem.find(directory => directory.name === "/") ?? currentDirectory;
-        continue;
-      }
-
-      // Move into a specified nested directory
-      currentDirectory =
-        currentDirectory.nestedDirectories.find((directory) => directory.name === chosenDirectoryName) ??
-        currentDirectory;
-      continue;
+      // Move into specified directory
+      return currentDirectory.push(directoryName);
     }
 
-    // ls command
-    if (line.startsWith("$") && line.includes("ls")) {
-      isListingCurrentDirectory = true;
-      continue;
+    // Create a key from the current path...
+    const key = createKeyFromPath(currentDirectory);
+    // ... and if it doesn't exist in the directories, add it
+    if (!directories.has(key)) directories.set(key, 0);
+
+    // dir command
+    if (line.startsWith("dir ")) {
+      return;
     }
 
-    // directory folder
-    if (line.split(" ")[0] === "dir" && isListingCurrentDirectory) {
-      const newDirectoryName: string = line.split(" ").at(-1) ?? "";
+    // File
+    const size = Number(line.split(" ")[0]);
+    // ... and add it to the current directory's size
+    directories.set(key, directories.get(key)! + size);
 
-      // Directory not yet within the nested directories of current directory
-      if (!currentDirectory.nestedDirectories.some((directory) => directory.name === newDirectoryName)) {
-        // Make the directory
-        const newDirectory: Directory = {
-          parentDirectory: currentDirectory,
-          name: newDirectoryName,
-          files: [],
-          nestedDirectories: [],
-        };
-
-        // TODO: Add newDirectory to nestedDirectories of currentDirectory in fileSystem
-      }
-
-      continue;
+    // Iterating backwards through the parent directories:
+    for (let i = currentDirectory.length - 1; i >= 0; i--) {
+      // Get the parent directories key...
+      const parent = createKeyFromPath(currentDirectory.slice(0, i));
+      // ... and add the file size to it's directory
+      directories.set(parent, directories.get(parent)! + size);
     }
+  });
 
-    // file
-    const [size, name] = line.split(" ");
-    const newFile: File = { name: name, size: parseInt(size) };
+  // Finally, return the directories
+  return directories;
+};
 
-    // TODO: Add newFile to currentDirectory.files in fileSystem
+// Returns the sum of every directory's size within a given threshold
+export const sumOfDirectories = (directories: Directories, threshold?: number) =>
+  // Return the directory values...
+  [...directories.values()]
+    // 1. Filtered to be below/at the given threshold
+    .filter((size) => (threshold ? size <= threshold : true))
+    // 2. Added together
+    .reduce((a, b) => a + b, 0);
 
+// Returns the minimum size directory to delete in order to free up space
+export const getSizeOfDirectoryToDelete = (directories: Directories, totalSpace: number, targetUnusedSpace: number) => {
+  // Get the current unused space...
+  const unusedSpace = totalSpace - directories.get("/")!;
+  // ... and the minimum space needed to reach the target
+  const spaceNeeded = targetUnusedSpace - unusedSpace;
 
-  }
-
-  return fileSystem;
-}
-
-// The sum of the file sizes of every file within a directory (including files within any nested directories)
-export function getDirectoryTotalFileSize(directory: Directory): number[] {
-  let size: number = 0;
-  let accumulator: number = 0;
-
-  // The sum of every file size at the top level of the directory
-  const internalFileSizes: number[] = directory.files.map((file) => file.size);
-  const totalInternalFileSize: number = internalFileSizes.reduce((a, b) => a + b, 0);
-  size += totalInternalFileSize;
-
-  for (const nestedDirectory of directory.nestedDirectories) {
-    // Find the sum of every file size within the nested directory (recursion)
-    const [nestedDirectorySize, nestedDirectoryAccumulator] = getDirectoryTotalFileSize(nestedDirectory);
-    size += nestedDirectorySize;
-    accumulator += nestedDirectoryAccumulator;
-  }
-
-  accumulator += size;
-
-  // Return both values so that the nested function can recursively sum the file size (of every internal file or files within a nested directory)
-  return [size, accumulator];
-}
-
-export function getFileSystemDirectorySizes(fileSystem: FileSystem): number[] {
-  /*
-  The recursive function, getDirectoryTotalFileSize() requires that two values are returned, to allow for recursion
-  Once the recursion has finished, both of the values returned will be the same
-  Therefore only one of the values is needed
-  */
-  return fileSystem.map((directory) => getDirectoryTotalFileSize(directory)[0]);
-}
+  // Return the directory values...
+  return (
+    [...directories.values()]
+      // 1. Filtered to be at/above the space needed
+      .filter((size) => size >= spaceNeeded)
+      // 2. Sorted in ascending order (smallet to largest)
+      .sort((a, b) => a - b)
+      // 3. Only the first item (or zero)
+      .shift() || 0
+  );
+};

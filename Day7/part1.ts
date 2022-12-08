@@ -1,10 +1,21 @@
-import { createFileSystem, getFileSystemDirectorySizes } from "./utils";
+import { input } from "./input";
+import { parseInput, sumOfDirectories, getSizeOfDirectoryToDelete } from "./utils";
 
-const fileSystem = createFileSystem();
-const directorySizes: number[] = getFileSystemDirectorySizes(fileSystem);
+// Get the directory/size map from the input data
+const directories = parseInput(input);
 
-const MAX_LIMIT: number = 100000;
-const filteredDirectorySizes: number[] = directorySizes.filter((size) => size <= MAX_LIMIT);
+// Get the sum of directory sizes below 100000
+const sumBelow100000 = sumOfDirectories(directories, 100000);
 
-const sumFilteredDirectorySizes: number = filteredDirectorySizes.reduce((a, b) => a + b, 0);
-console.log(sumFilteredDirectorySizes);
+console.log("Sum of directory sizes below 100000:", sumBelow100000, "(Part 1)");
+
+// Get the size of the directory to delete in order to free up space
+const sizeOfDirectoryToDelete = getSizeOfDirectoryToDelete(
+  directories,
+  // Total disk space
+  70000000,
+  // Target unused space
+  30000000
+);
+
+console.log("Size of directory to delete:", sizeOfDirectoryToDelete, "(Part 2)");
