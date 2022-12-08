@@ -59,6 +59,11 @@ export function createFileSystem() {
           fileSystem.set(key, file);
         }
 
+        for (const dir of instruction.nestedDirectories) {
+          const key = currentDirectory.endsWith("/") ? `${currentDirectory}${dir}` : `${currentDirectory}/${dir}`;
+          fileSystem.set(key, { name: "_", size: 0 });
+        }
+
         break;
     }
 
