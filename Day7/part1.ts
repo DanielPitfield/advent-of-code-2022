@@ -1,4 +1,4 @@
-import { createFileSystem, getTotalDirectorySizes } from "./utils";
+import { getTotalDirectorySizes } from "./utils";
 
 const totalDirectorySizes = getTotalDirectorySizes();
 
