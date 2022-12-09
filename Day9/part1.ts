@@ -1,5 +1,4 @@
 import { getVisitedPositions } from "./utils";
 
-
-const numVisitedTiles = getVisitedPositions().size;
-console.log(numVisitedTiles);
+const visitedPositions = getVisitedPositions();
+console.log(visitedPositions.size);

@@ -11,8 +11,8 @@ function isTouching(): boolean {
   return xDiff <= 1 && yDiff <= 1;
 }
 
-export function getVisitedPositions(): Set<Position> {
-  const visitedPositions: Set<Position> = new Set();
+export function getVisitedPositions() {
+  const visitedPositions = new Set();
 
   const instructions = input.split("\n");
 
@@ -23,28 +23,17 @@ export function getVisitedPositions(): Set<Position> {
       headPosition.prevX = headPosition.xPos;
       headPosition.prevY = headPosition.yPos;
 
-      switch (direction) {
-        case "U":
-          headPosition.yPos++;
-          break;
-        case "D":
-          headPosition.yPos--;
-          break;
-        case "L":
-          headPosition.xPos--;
-          break;
-        case "R":
-          headPosition.xPos++;
-          break;
-      }
+      if (direction === "U") headPosition.yPos++;
+      else if (direction === "D") headPosition.yPos--;
+      else if (direction === "L") headPosition.xPos--;
+      else if (direction === "R") headPosition.xPos++;
 
-      // Tail is moved to where the head was the previous move (to catch up)
       if (!isTouching()) {
         tailPosition.xPos = headPosition.prevX;
         tailPosition.yPos = headPosition.prevY;
       }
 
-      visitedPositions.add({ xPos: tailPosition.xPos, yPos: tailPosition.yPos });
+      visitedPositions.add(`${tailPosition.xPos},${tailPosition.yPos}`);
     }
   }
 
