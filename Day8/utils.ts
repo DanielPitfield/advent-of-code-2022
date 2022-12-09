@@ -59,68 +59,89 @@ export function getVisibilityGrid(): boolean[][] {
   );
 }
 
-const visibiltyGrid = getVisibilityGrid();
-
 function getLeftViewingDistance(xPos: number, yPos: number): number {
-  const entireRow: boolean[] = visibiltyGrid[yPos];
+  const value = grid[yPos][xPos];
 
-  // The portion from left of the value to the left edge of the grid
-  const portion: boolean[] = entireRow.slice(0, xPos).reverse();
+  const entireRow: number[] = grid[yPos];
+  let portion: number[] = entireRow.slice(0, xPos);
+  portion = portion.reverse();
 
-  // First tree which is blocking
-  const blockingIndex: number = portion.findIndex((x) => x);
+  // Navigate leftward in the row
+  for (let i = 0; i < portion.length; i++) {
+    const height = portion[i];
 
-  if (blockingIndex >= 0) {
-    return blockingIndex + 1;
+    if (height >= value) {
+      // Return distance visible from xPos to the tree
+      return i + 1;
+    }
   }
 
-  // Else, can see edge of grid
-  return portion.length;
+  // Else; can see to edge of grid
+  return portion.length; // Return number of trees to left
 }
 
 function getRightViewingDistance(xPos: number, yPos: number): number {
-  const entireRow: boolean[] = visibiltyGrid[yPos];
+  const value = grid[yPos][xPos];
 
-  // The portion from right of the value to the right edge of the grid
-  const portion: boolean[] = entireRow.slice(xPos + 1);
+  const entireRow: number[] = grid[yPos];
+  const portion: number[] = entireRow.slice(xPos + 1);
 
-  const blockingIndex: number = portion.findIndex((x) => x);
+  // Navigate rightward in the row
+  for (let i = 0; i < portion.length; i++) {
+    const height = portion[i];
 
-  if (blockingIndex >= 0) {
-    return blockingIndex + 1;
+    if (height >= value) {
+      // Return distance visible from xPos to the tree
+      return i + 1;
+    }
   }
 
-  return portion.length;
+  // Else; can see to edge of grid
+  return portion.length; // Return number of trees to right
 }
 
 function getTopViewingDistance(xPos: number, yPos: number): number {
-  const portion: boolean[] = [];
+  const value = grid[yPos][xPos];
+
+  const portion: number[] = [];
   for (let i = yPos - 1; i >= 0; i--) {
-    portion.push(visibiltyGrid[i][xPos]);
+    portion.push(grid[i][xPos]);
   }
 
-  const blockingIndex: number = portion.findIndex((x) => x);
+  // Navigate upward in the row
+  for (let i = 0; i < portion.length; i++) {
+    const height = portion[i];
 
-  if (blockingIndex >= 0) {
-    return blockingIndex + 1;
+    if (height >= value) {
+      // Return distance visible from yPos to the tree
+      return i + 1;
+    }
   }
 
-  return portion.length;
+  // Else; can see to edge of grid
+  return portion.length; // Return number of trees to top
 }
 
 function getBottomViewingDistance(xPos: number, yPos: number): number {
-  const portion: boolean[] = [];
-  for (let i = yPos + 1; i < visibiltyGrid.length; i++) {
-    portion.push(visibiltyGrid[i][xPos]);
+  const value = grid[yPos][xPos];
+
+  const portion: number[] = [];
+  for (let i = yPos + 1; i < grid.length; i++) {
+    portion.push(grid[i][xPos]);
   }
 
-  const blockingIndex: number = portion.findIndex((x) => x);
+  // Navigate downward in the row
+  for (let i = 0; i < portion.length; i++) {
+    const height = portion[i];
 
-  if (blockingIndex >= 0) {
-    return blockingIndex + 1;
+    if (height >= value) {
+      // Return distance visible from yPos to the tree
+      return i + 1;
+    }
   }
 
-  return portion.length;
+  // Else; can see to edge of grid
+  return portion.length; // Return number of trees to bottom
 }
 
 export function getScenicScore(xPos: number, yPos: number): number {
