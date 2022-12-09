@@ -1,7 +1,7 @@
 import { input } from "./input";
 
 const rows: string[] = input.split("\n");
-export const grid: number[][] = rows.map((row) => row.split("").map((x) => parseInt(x)));
+const grid: number[][] = rows.map((row) => row.split("").map((x) => parseInt(x)));
 
 export function checkRowVisibility(xPos: number, yPos: number): boolean {
   const value = grid[yPos][xPos];
