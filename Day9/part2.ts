@@ -9,10 +9,21 @@ for (const instruction of instructions) {
   const [direction, distance] = instruction.split(" ");
 
   for (let i = 0; i < parseInt(distance); i++) {
-    if (direction === "U") snake[0].yPos++;
-    else if (direction === "D") snake[0].yPos--;
-    else if (direction === "L") snake[0].xPos--;
-    else if (direction === "R") snake[0].xPos++;
+    
+    switch (direction) {
+      case "U":
+        snake[0].yPos++;
+        break;
+      case "D":
+        snake[0].yPos--;
+        break;
+      case "L":
+        snake[0].xPos--;
+        break;
+      case "R":
+        snake[0].xPos++;
+        break;
+    }
 
     for (let j = 1; j < snake.length; j++) {
       if (!areTouching(snake[j - 1], snake[j])) {

@@ -12,10 +12,20 @@ for (const instruction of instructions) {
     headPosition.prevX = headPosition.xPos;
     headPosition.prevY = headPosition.yPos;
 
-    if (direction === "U") headPosition.yPos++;
-    else if (direction === "D") headPosition.yPos--;
-    else if (direction === "L") headPosition.xPos--;
-    else if (direction === "R") headPosition.xPos++;
+    switch (direction) {
+      case "U":
+        headPosition.yPos++;
+        break;
+      case "D":
+        headPosition.yPos--;
+        break;
+      case "L":
+        headPosition.xPos--;
+        break;
+      case "R":
+        headPosition.xPos++;
+        break;
+    }
 
     if (!areTouching(headPosition, tailPosition)) {
       tailPosition.xPos = headPosition.prevX;
