@@ -105,12 +105,14 @@ export function getTraversedGrid(): boolean[][] {
           if (areSameRow && twoStepsApart) {
             tailPosition = { xPos: tailPosition.xPos + xPositionChange, yPos: tailPosition.yPos };
             grid[tailPosition.yPos][tailPosition.xPos] = true;
+            continue;
           }
 
           if (!areSameColumn && !areSameRow) {
             // Catching up to head (subtract/opposite of yPositionChange)
             tailPosition = { xPos: headPosition.xPos - xPositionChange, yPos: headPosition.yPos };
             grid[tailPosition.yPos][tailPosition.xPos] = true;
+            continue;
           }
         }
 
