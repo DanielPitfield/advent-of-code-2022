@@ -1,154 +1,25 @@
 import { input } from "./input";
 
-// Debug: print the grid
-const DEBUG_PRINT_GRID_EACH_STEP = false;
+export const instructions = input.split("\n");
 
-type Position = { xPos: number; yPos: number };
+export type Position = { xPos: number; yPos: number; prevX?: number; prevY?: number };
 
-const GRID_SIZE: number = 2000;
-const grid: boolean[][] = new Array(GRID_SIZE).fill(false).map((x) => new Array(GRID_SIZE).fill(false));
-
-// Start in middle indexes of array (to avoid traversing to out of bound indexes)
-let headPosition: Position = { xPos: GRID_SIZE / 2, yPos: GRID_SIZE / 2 };
-let tailPosition: Position = { xPos: GRID_SIZE / 2, yPos: GRID_SIZE / 2 };
-
-// Register the starting position as visited
-grid[tailPosition.yPos][tailPosition.xPos] = true;
-
-export function getTraversedGrid(): boolean[][] {
-  const instructions = input.split("\n");
-
-  for (const instruction of instructions) {
-    const [direction, distance] = instruction.split(" ");
-
-    switch (direction) {
-      case "U":
-      case "D":
-        const yPositionChange = direction === "D" ? 1 : -1;
-
-        for (let i = 0; i < parseInt(distance); i++) {
-          printGrid(`${direction} 1`);
-          headPosition = { xPos: headPosition.xPos, yPos: headPosition.yPos + yPositionChange };
-
-          const areSameRow = tailPosition.yPos === headPosition.yPos;
-          const areSameColumn = tailPosition.xPos === headPosition.xPos;
-          const twoStepsApart = Math.abs(tailPosition.yPos - headPosition.yPos) === 2;
-
-          // Determine if the Tail is diagnonally touching the Head
-          const isDiagonallyTouching = (() => {
-            const possibleDiagnonalHeadPositions = [
-              { xPos: tailPosition.xPos - 1, yPos: tailPosition.yPos - 1 }, // Top-left,
-              { xPos: tailPosition.xPos + 1, yPos: tailPosition.yPos - 1 }, // Top-right,
-              { xPos: tailPosition.xPos - 1, yPos: tailPosition.yPos + 1 }, // Bottom-left,
-              { xPos: tailPosition.xPos + 1, yPos: tailPosition.yPos + 1 }, // Bottom-right,
-            ];
-
-            return possibleDiagnonalHeadPositions.some(
-              ({ xPos, yPos }) => headPosition.xPos === xPos && headPosition.yPos === yPos
-            );
-          })();
-
-          // If diagnollay touching
-          if (isDiagonallyTouching) {
-            // Do not move the tail
-            continue;
-          }
-
-          if (areSameColumn && twoStepsApart) {
-            tailPosition = { xPos: tailPosition.xPos, yPos: tailPosition.yPos + yPositionChange };
-            grid[tailPosition.yPos][tailPosition.xPos] = true;
-            continue;
-          }
-
-          if (!areSameColumn && !areSameRow) {
-            // Catching up to head (subtract/opposite of yPositionChange)
-            tailPosition = { xPos: headPosition.xPos, yPos: headPosition.yPos - yPositionChange };
-            grid[tailPosition.yPos][tailPosition.xPos] = true;
-            continue;
-          }
-        }
-
-        break;
-
-      case "L":
-      case "R":
-        const xPositionChange = direction === "R" ? 1 : -1;
-
-        for (let i = 0; i < parseInt(distance); i++) {
-          printGrid(`${direction} 1`);
-          headPosition = { xPos: headPosition.xPos + xPositionChange, yPos: headPosition.yPos };
-
-          const areSameRow = tailPosition.yPos === headPosition.yPos;
-          const areSameColumn = tailPosition.xPos === headPosition.xPos;
-          const twoStepsApart = Math.abs(tailPosition.xPos - headPosition.xPos) === 2;
-
-          // Determine if the Tail is diagnonally touching the Head
-          const isDiagonallyTouching = (() => {
-            const possibleDiagnonalHeadPositions = [
-              { xPos: tailPosition.xPos - 1, yPos: tailPosition.yPos - 1 }, // Top-left,
-              { xPos: tailPosition.xPos + 1, yPos: tailPosition.yPos - 1 }, // Top-right,
-              { xPos: tailPosition.xPos - 1, yPos: tailPosition.yPos + 1 }, // Bottom-left,
-              { xPos: tailPosition.xPos + 1, yPos: tailPosition.yPos + 1 }, // Bottom-right,
-            ];
-
-            return possibleDiagnonalHeadPositions.some(
-              ({ xPos, yPos }) => headPosition.xPos === xPos && headPosition.yPos === yPos
-            );
-          })();
-
-          // If diagnollay touching
-          if (isDiagonallyTouching) {
-            // Do not move the tail
-            continue;
-          }
-
-          if (areSameRow && twoStepsApart) {
-            tailPosition = { xPos: tailPosition.xPos + xPositionChange, yPos: tailPosition.yPos };
-            grid[tailPosition.yPos][tailPosition.xPos] = true;
-            continue;
-          }
-
-          if (!areSameColumn && !areSameRow) {
-            // Catching up to head (subtract/opposite of yPositionChange)
-            tailPosition = { xPos: headPosition.xPos - xPositionChange, yPos: headPosition.yPos };
-            grid[tailPosition.yPos][tailPosition.xPos] = true;
-            continue;
-          }
-        }
-
-        break;
-    }
-  }
-
-  return grid;
+// Are the head and the tail touching (less than 1 move apart in either vertically or horizontally)
+export function areTouching(headPosition: Position, tailPosition: Position): boolean {
+  const xDiff = Math.abs(headPosition.xPos - tailPosition.xPos);
+  const yDiff = Math.abs(headPosition.yPos - tailPosition.yPos);
+  return xDiff <= 1 && yDiff <= 1;
 }
 
-function printGrid(instruction: string) {
-  if (!DEBUG_PRINT_GRID_EACH_STEP) {
-    return;
-  }
+export const moveKnot = (firstPosition: Position, secondPosition: Position) => {
+  let newPos = { ...secondPosition };
+  let xDiff = secondPosition.xPos - firstPosition.xPos;
+  let yDiff = secondPosition.yPos - firstPosition.yPos;
 
-  if (GRID_SIZE > 20) {
-    throw new Error("GRID_SIZE is too large to print; use a smaller GRID_SIZE and smaller set of instructions");
-  }
+  if (xDiff > 0) newPos.xPos--;
+  else if (xDiff < 0) newPos.xPos++;
+  if (yDiff > 0) newPos.yPos--;
+  else if (yDiff < 0) newPos.yPos++;
 
-  const visibleGrid = grid.map((row, y) => {
-    return row.map((visited, x) => {
-      if (tailPosition.xPos === x && tailPosition.yPos === y) {
-        return "T";
-      }
-
-      if (headPosition.xPos === x && headPosition.yPos === y) {
-        return "H";
-      }
-
-      if (visited) {
-        return "#";
-      }
-
-      return "-";
-    });
-  });
-  console.table(visibleGrid);
-  console.log(`\n${instruction}`);
-}
+  return newPos;
+};
