@@ -1,6 +1,5 @@
-import { getTraversedGrid } from "./utils";
+import { getVisitedPositions } from "./utils";
 
-const numVisitedTiles = getTraversedGrid()
-  .flat()
-  .filter((x) => x).length;
+
+const numVisitedTiles = getVisitedPositions().size;
 console.log(numVisitedTiles);
