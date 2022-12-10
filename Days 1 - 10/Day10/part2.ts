@@ -28,7 +28,7 @@ function incrementCycleCounter() {
         .join("")
     );
 
-    // Increment the sprie position to the next row
+    // Increment the sprite position to the next row
     registerValue += SCREEN_WIDTH;
   }
 }
