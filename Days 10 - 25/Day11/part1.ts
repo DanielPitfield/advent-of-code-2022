@@ -19,7 +19,7 @@ const monkeyInventories: {
     .split(",")
     .flatMap((x) => parseInt(x.trim()));
 
-  const [_, operator, operand]: string[] = lines[2].split("=")[1].split(" ");
+  const [_, operator, operand]: string[] = lines[2].split("=")[1].trim().split(" ");
   const testOperand: number = parseInt(lines[3].split(":")[1].split(" ").at(-1) ?? "0");
 
   const newTrueMonkeyNumber: number = parseInt(lines[4].split("").at(-1) ?? "0");
@@ -36,8 +36,6 @@ const monkeyInventories: {
     newFalseMonkeyNumber,
   };
 });
-
-console.log(monkeyInventories)
 
 const NUM_ROUNDS = 20;
 
@@ -83,7 +81,7 @@ const monkeysNumItemsProcessed: number[] = monkeyInventories
   .map((monkey) => monkey.numItemsInspected)
   .sort((a, b) => b - a);
 
-//console.log(monkeysNumItemsProcessed);
+console.log(monkeysNumItemsProcessed);
 
 const monkeyBusinessLevel = monkeysNumItemsProcessed[0] * monkeysNumItemsProcessed[1];
-//console.log(monkeyBusinessLevel);
+console.log(monkeyBusinessLevel);
