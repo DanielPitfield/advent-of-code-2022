@@ -66,7 +66,7 @@ for (let i = 0; i < NUM_ROUNDS; i++) {
       const testOutcome: boolean = newWorryLevel % monkey.testOperand === 0;
 
       // Remove from current monkey before throwing
-      monkey.items.splice(j);
+      monkey.items.splice(j, 1);
 
       // Throw item to new monkey (the monkey thrown to depends on the testOutcome)
       const index = monkeyInventories.findIndex(
