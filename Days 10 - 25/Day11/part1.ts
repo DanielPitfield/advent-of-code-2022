@@ -37,9 +37,7 @@ const monkeyInventories: {
   };
 });
 
-const NUM_ROUNDS = 20;
-
-for (let i = 0; i < NUM_ROUNDS; i++) {
+function processInspectionRound() {
   // Process the monkey note/instruction block for every monkey (and apply the result as mutating monkeyInventories)
   for (const monkey of monkeyInventories) {
     // No point inspecting, processing and moving items, if there are none
@@ -75,6 +73,11 @@ for (let i = 0; i < NUM_ROUNDS; i++) {
       monkeyInventories[index].items.push(newWorryLevel);
     }
   }
+}
+
+const NUM_ROUNDS = 20;
+for (let i = 0; i < NUM_ROUNDS; i++) {
+  processInspectionRound();
 }
 
 const monkeysNumItemsProcessed: number[] = monkeyInventories
