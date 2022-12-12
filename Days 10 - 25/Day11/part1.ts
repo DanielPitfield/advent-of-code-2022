@@ -22,8 +22,8 @@ const monkeyInventories: {
   const [_, operator, operand]: string[] = lines[2].split("=")[1].trim().split(" ");
   const testOperand: number = parseInt(lines[3].split(":")[1].split(" ").at(-1) ?? "0");
 
-  const newTrueMonkeyNumber: number = parseInt(lines[4].split("").at(-1) ?? "0");
-  const newFalseMonkeyNumber: number = parseInt(lines[5].split("").at(-1) ?? "0");
+  const newTrueMonkeyNumber: number = parseInt(lines[4].split(" ").at(-1) ?? "0");
+  const newFalseMonkeyNumber: number = parseInt(lines[5].split(" ").at(-1) ?? "0");
 
   return {
     monkeyNumber,
