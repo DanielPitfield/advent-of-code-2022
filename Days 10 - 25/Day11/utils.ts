@@ -1,6 +1,6 @@
 import { input } from "./input";
 
-type OperatorSymbol = "/" | "-" | "+" | "*";
+export type OperatorSymbol = "/" | "-" | "+" | "*";
 
 export const initialMonkeyNotes = input.split("\n\n");
 
