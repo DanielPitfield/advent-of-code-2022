@@ -63,15 +63,18 @@ function processInspectionRound() {
       // All tests are determining whether the worry level is divisible by the testOperand
       const testOutcome: boolean = newWorryLevel % monkey.testOperand === 0;
 
-      // Remove from current monkey before throwing
-      monkey.items.splice(j, 1);
-
       // Throw item to new monkey (the monkey thrown to depends on the testOutcome)
       const index = monkeyInventories.findIndex(
         (x) => x.monkeyNumber === (testOutcome ? monkey.newTrueMonkeyNumber : monkey.newFalseMonkeyNumber)
       );
       monkeyInventories[index].items.push(newWorryLevel);
     }
+
+    /*
+    Items are always thrown to other monkeys, regardless of test outcome
+    So once every item has been processed, empty the items for the current monkey (they have all been moved elsewhere)
+    */
+    monkey.items = [];
   }
 }
 
