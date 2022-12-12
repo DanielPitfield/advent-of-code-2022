@@ -1,7 +1,6 @@
 import { completeInspection, getBusinessLevel } from "./utils";
 
-const NUM_ROUNDS = 20;
-const monkeyInventories = completeInspection(NUM_ROUNDS, false)
+const monkeyInventories = completeInspection({ numRounds: 20, isWorried: false });
 const monkeyBusinessLevel = getBusinessLevel(monkeyInventories);
 
 console.log(monkeyBusinessLevel);

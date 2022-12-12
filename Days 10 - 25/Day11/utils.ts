@@ -107,9 +107,9 @@ function processInspectionRound(isWorried: boolean) {
   }
 }
 
-export function completeInspection(numRounds: number, isWorried: boolean) {
-  for (let i = 0; i < numRounds; i++) {
-    processInspectionRound(isWorried);
+export function completeInspection(inspectionConfig: { numRounds: number; isWorried: boolean }) {
+  for (let i = 0; i < inspectionConfig.numRounds; i++) {
+    processInspectionRound(inspectionConfig.isWorried);
   }
 
   return monkeyInventories;
