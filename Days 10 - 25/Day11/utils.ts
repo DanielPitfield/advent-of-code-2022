@@ -64,9 +64,9 @@ const monkeyInventories: Monkey[] = initialMonkeyNotes.map((note) => {
   };
 });
 
+const productOfDivisors = monkeyInventories.map((m) => m.testOperand).reduce((acc, cur) => acc * cur, 1);
+
 function processInspectionRound(isWorried: boolean) {
-  const productOfDivisors = monkeyInventories.map((m) => m.testOperand).reduce((acc, cur) => acc * cur, 1);
-  
   // Process the monkey note/instruction block for every monkey (and apply the result as mutating monkeyInventories)
   for (const monkey of monkeyInventories) {
     // No point inspecting, processing and moving items, if there are none
