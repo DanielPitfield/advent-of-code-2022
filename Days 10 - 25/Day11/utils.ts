@@ -65,6 +65,8 @@ const monkeyInventories: Monkey[] = initialMonkeyNotes.map((note) => {
 });
 
 function processInspectionRound(isWorried: boolean) {
+  const productOfDivisors = monkeyInventories.map((m) => m.testOperand).reduce((acc, cur) => acc * cur, 1);
+  
   // Process the monkey note/instruction block for every monkey (and apply the result as mutating monkeyInventories)
   for (const monkey of monkeyInventories) {
     // No point inspecting, processing and moving items, if there are none
@@ -79,10 +81,10 @@ function processInspectionRound(isWorried: boolean) {
       monkey.numItemsInspected++;
 
       let newWorryLevel: number =
-        operatorMappings
+        (operatorMappings
           .find((x) => x.symbol === monkey.operator)
           // Sometimes, the operation can refer to the worry level using "old" (e.g new = old * old)
-          ?.function(item, monkey.operand === "old" ? item : parseInt(monkey.operand)) ?? item;
+          ?.function(item, monkey.operand === "old" ? item : parseInt(monkey.operand)) ?? item) % productOfDivisors;
 
       // Monkeys are not so worried and get bored, divide worry levels by 3
       if (!isWorried) {
