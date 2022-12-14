@@ -19,6 +19,10 @@ export function isPairOrdered(leftSide: any[], rightSide: any[]): boolean | unde
     if (Number.isInteger(leftSideItem) && Number.isInteger(rightSideItem)) {
       // The items currently being checked on each side are equal, check the next item
       if (leftSideItem === rightSideItem) {
+        if (i === maxLength - 1) {
+          return true;
+        }
+
         continue;
       }
 
@@ -34,6 +38,14 @@ export function isPairOrdered(leftSide: any[], rightSide: any[]): boolean | unde
 
     if (!Array.isArray(rightSideItem)) {
       return isPairOrdered(leftSideItem, [rightSideItem]);
+    }
+
+    if (JSON.stringify(leftSideItem) === JSON.stringify(rightSideItem)) {
+      if (i === maxLength - 1) {
+        return true;
+      }
+
+      continue;
     }
 
     const currentOutcome: boolean | undefined = isPairOrdered(leftSideItem, rightSideItem);
