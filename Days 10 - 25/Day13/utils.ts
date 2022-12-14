@@ -17,12 +17,14 @@ export function isPairOrdered(leftSide: any[], rightSide: any[]): boolean | unde
 
     // Both integers
     if (Number.isInteger(leftSideItem) && Number.isInteger(rightSideItem)) {
-      // The items currently being checked on each side are equal, check the next item
+      // The items currently being checked on each side are equal,
       if (leftSideItem === rightSideItem) {
+        // Last pair to check (all previous pairs were inconclusive and this pair is equal)
         if (i === maxLength - 1) {
           return true;
         }
 
+        // Check the next item
         continue;
       }
 
@@ -38,14 +40,6 @@ export function isPairOrdered(leftSide: any[], rightSide: any[]): boolean | unde
 
     if (!Array.isArray(rightSideItem)) {
       return isPairOrdered(leftSideItem, [rightSideItem]);
-    }
-
-    if (JSON.stringify(leftSideItem) === JSON.stringify(rightSideItem)) {
-      if (i === maxLength - 1) {
-        return true;
-      }
-
-      continue;
     }
 
     const currentOutcome: boolean | undefined = isPairOrdered(leftSideItem, rightSideItem);
