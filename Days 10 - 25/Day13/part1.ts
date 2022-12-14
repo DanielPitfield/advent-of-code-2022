@@ -1,46 +1,36 @@
 import { input } from "./input";
 
 function isPairOrdered(leftSide: any[], rightSide: any[]): boolean | undefined {
-  // Left side has no items
-  if (!leftSide) {
-    return true;
-  }
+  // How many items is in the largest array of the pair?
+  const maxLength = Math.max(leftSide.length, rightSide.length);
 
-  // Right side has no items
-  if (!rightSide) {
-    return false;
-  }
-
-  // How many items (wther that be integers or more nested arrays) does the larger side have?
-  const largestSideLength: number = Math.max(leftSide.length, rightSide.length);
-
-  for (let i = 0; i < largestSideLength; i++) {
+  for (let i = 0; i < maxLength; i++) {
     const leftSideItem = leftSide[i];
     const rightSideItem = rightSide[i];
 
-    // Left side has ran out of items before the right side, this means they are ordered
-    if (!leftSideItem) {
+    // Ran out of items on the left side, the pair is ordered
+    if (leftSideItem === undefined) {
       return true;
     }
 
-    if (!rightSideItem) {
+    if (rightSideItem === undefined) {
       return false;
     }
 
-    // The currently iterated item on both sides are just integers
+    // Both integers
     if (Number.isInteger(leftSideItem) && Number.isInteger(rightSideItem)) {
-      // Are equal, can't determine whether they are ordered just yet, move on to next integers on each side
+      // The items currently being checked on each side are equal, check the next item
       if (leftSideItem === rightSideItem) {
         continue;
       }
 
-      // The integer on the left must be smaller than the integer on the right for the pair to be ordered
+      // The left side item must be smaller than the right side item (for the pair to be ordered)
       return leftSideItem < rightSideItem;
     }
 
-    // The left side item is not an array but the right side is
+    // Right side is an array but the left side is not
     if (!Array.isArray(leftSideItem)) {
-      // Recursively call the function, now with the left side as an array
+      // Recursively call function with left side as an array
       return isPairOrdered([leftSideItem], rightSideItem);
     }
 
@@ -48,27 +38,28 @@ function isPairOrdered(leftSide: any[], rightSide: any[]): boolean | undefined {
       return isPairOrdered(leftSideItem, [rightSideItem]);
     }
 
-    // At this stage in the recursion, can it be determined whether the pair is in order?
     const currentOutcome: boolean | undefined = isPairOrdered(leftSideItem, rightSideItem);
 
-    // If the outcome is conclusive (is a boolean and not undefined)
-    if (currentOutcome) {
+    // If the outcome can be determined at this stage in the recursion, return (stop recursion)
+    if (currentOutcome !== undefined) {
       return currentOutcome;
     }
   }
 }
 
-let sumIndices = 0;
-
 const pairs = input.split("\n\n");
 
-for (const [pairIndex, pair] of pairs.entries()) {
-  const [leftSide, rightSide] = pair.split("\n").map((x) => JSON.parse(x));
+let sumIndices = 0;
+
+for (let i = 0; i < pairs.length; i++) {
+  const [leftSide, rightSide] = pairs[i].split("\n").map((x) => JSON.parse(x));
 
   if (isPairOrdered(leftSide, rightSide)) {
-    // Remember first pair has the index 1 (therefore pairIndex + 1)
-    sumIndices += pairIndex + 1;
+    // First pair is index 1 (therefore i + 1)
+    sumIndices += i + 1;
   }
 }
 
-console.log(sumIndices);
+//console.log(sumIndices);
+
+console.log(isPairOrdered([[], 4], [[], 4]));
