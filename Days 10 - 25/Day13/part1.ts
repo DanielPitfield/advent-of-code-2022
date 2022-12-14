@@ -15,9 +15,3 @@ for (let i = 0; i < pairs.length; i++) {
 }
 
 console.log(sumIndices);
-
-// This should be true and not undefined
-console.log(isPairOrdered([1], [[1], 1]));
-
-// Should this also be true?
-console.log(isPairOrdered([4], [4]));
