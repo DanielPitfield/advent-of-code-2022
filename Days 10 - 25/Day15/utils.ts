@@ -15,10 +15,10 @@ export function getExcludedPositions(sensorPosition: Position, distance: number)
   // From the row (which is distance number of rows above the sensor position) to the row (which is distance number of rows below the sensor position)
   for (let yPos = sensorPosition.yPos - distance; yPos <= sensorPosition.yPos + distance; yPos++) {
     // How many rows away from the sensor position?
-    const rowDiff = Math.abs(sensorPosition.yPos - yPos) - distance + 1;
-    // How many positions will be excluded on this row?
-    const numExcludedPositionsForRow = 2 * rowDiff - 1;
-    // Centered, half on left, half on right
+    const rowDiff = Math.abs(sensorPosition.yPos - yPos);
+    // How many positions will be excluded on this row (2n + 1)?
+    const numExcludedPositionsForRow = Math.abs(distance - rowDiff) * 2 + 1;
+    // Middle/center is the sensor, half of the rest of the positions to left, half on right
     const distanceEitherWay = Math.floor((numExcludedPositionsForRow - 1) / 2);
 
     for (let xPos = sensorPosition.xPos - distanceEitherWay; xPos <= sensorPosition.xPos + distanceEitherWay; xPos++) {

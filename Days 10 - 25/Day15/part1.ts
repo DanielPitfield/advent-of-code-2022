@@ -18,7 +18,6 @@ for (const line of lines) {
   const beaconPosition: Position = { xPos: parseInt(beaconXPos), yPos: parseInt(beaconYPos) };
 
   const distance = calculateManhattanDistance(sensorPosition, beaconPosition);
-
   const excludedPositions: Position[] = getExcludedPositions(sensorPosition, distance);
 
   allExcludedPositions.push(excludedPositions);
