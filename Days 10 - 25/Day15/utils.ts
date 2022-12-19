@@ -12,7 +12,11 @@ export function calculateManhattanDistance(point1: Position, point2: Position): 
 export function getExcludedPositions(sensorPosition: Position, distance: number): Position[] {
   const excludedPositions: Position[] = [];
 
-  // From the row (which is distance number of rows above the sensor position) to the row (which is distance number of rows below the sensor position)
+  /*
+  FROM: the row (which is distance number of rows above the sensor position),
+  Through the row of the sensor position,
+  TO: the row (which is distance number of rows below the sensor position)
+  */
   for (let yPos = sensorPosition.yPos - distance; yPos <= sensorPosition.yPos + distance; yPos++) {
     // How many rows away from the sensor position?
     const rowDiff = Math.abs(sensorPosition.yPos - yPos);
@@ -21,6 +25,11 @@ export function getExcludedPositions(sensorPosition: Position, distance: number)
     // Middle/center is the sensor, half of the rest of the positions to left, half on right
     const distanceEitherWay = Math.floor((numExcludedPositionsForRow - 1) / 2);
 
+    /*
+    FROM: the column (which is distanceEitherWay to the left of the sensor position),
+    Through the column of the sensor position,
+    TO: the column (which is distanceEitherWay to the right of the sensor position)
+    */
     for (let xPos = sensorPosition.xPos - distanceEitherWay; xPos <= sensorPosition.xPos + distanceEitherWay; xPos++) {
       const excludedPosition: Position = { xPos: xPos, yPos: yPos };
       excludedPositions.push(excludedPosition);
