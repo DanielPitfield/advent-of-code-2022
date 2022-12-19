@@ -1,46 +1,38 @@
 import { Position } from "../../Days 1 - 9/Day9/utils";
 import { getRockWalls } from "./utils";
 
+// Where does the sand start pouring in from?
 const startingSandPosition: Position = { xPos: 500, yPos: 0 };
-const rockWalls: Position[] = getRockWalls().flat();
+// At what positions are there rock walls?
+const rockWalls: Position[] = getRockWalls();
 
-const MIN_XPOS = rockWalls.reduce((min, x) => {
-  if (x.xPos < min) {
-    min = x.xPos;
-  }
-  return min;
-}, 0);
+// At what positions has sand come to rest/settled at?
+const allSandPositions: Position[] = [];
 
-const MAX_XPOS = rockWalls.reduce((max, x) => {
-  if (x.xPos > max) {
-    max = x.xPos;
-  }
-  return max;
-}, 0);
+// Is there a rock wall at the provided position?
+function isPositionRockWall(position: Position): boolean {
+  return rockWalls.some((rock) => rock.xPos === position.xPos && rock.yPos === position.yPos);
+}
 
-const MIN_YPOS = rockWalls.reduce((min, x) => {
-  if (x.yPos < min) {
-    min = x.yPos;
-  }
-  return min;
-}, 0);
+// Is there a unit of sand (which has come to rest) at the provided position?
+function isPositionSettledSand(position: Position): boolean {
+  return allSandPositions.some((sand) => sand.xPos == position.xPos && sand.yPos === position.yPos);
+}
 
-const MAX_YPOS = rockWalls.reduce((max, x) => {
-  if (x.yPos > max) {
-    max = x.yPos;
-  }
-  return max;
-}, 0);
+// Drop one unit of sand (recording where it comes to rest)
+function dropSand() {
+  let isFalling = true;
+  const currentSandPosition: Position = startingSandPosition;
 
-const Grid = new Array(MAX_YPOS - MIN_YPOS).fill(".").map((row) => new Array(MAX_XPOS - MIN_XPOS).fill("."));
+  while (isFalling) {
+    currentSandPosition.yPos++;
 
-for (let y = 0; y < MAX_YPOS; y++) {
-  for (let x = 0; x < MAX_XPOS; x++) {
-    console.log(`${x},${y}`);
-    if (rockWalls.some((position) => position.xPos === x + MIN_XPOS && position.yPos === y + MIN_YPOS)) {
-      Grid[y][x] = "#";
+    // If the unit of sand has dropped and hit a rock wall
+    if (isPositionRockWall(currentSandPosition)) {
+    }
+
+    // If the unit of sand has dropped and hit another unit of sand
+    if (isPositionSettledSand(currentSandPosition)) {
     }
   }
 }
-
-console.log(Grid.map((x) => x.join("")).join("\n"));

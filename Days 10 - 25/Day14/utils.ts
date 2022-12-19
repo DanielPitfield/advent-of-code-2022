@@ -28,7 +28,7 @@ export function getAllPointsBetween(point1: Position, point2: Position): Positio
 }
 
 // At what positions is there a rock wall (denoted by the symbol # in the example)?
-export function getRockWalls(): Position[][] {
+export function getRockWalls(): Position[] {
   const lines = input.split("\n");
 
   const rockWalls: Position[][] = [];
@@ -59,5 +59,5 @@ export function getRockWalls(): Position[][] {
     rockWalls.push(entireLine.flat());
   }
 
-  return rockWalls;
+  return rockWalls.flat();
 }
