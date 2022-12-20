@@ -9,15 +9,11 @@ export function calculateManhattanDistance(point1: Position, point2: Position): 
   return diffX + diffY;
 }
 
-// What positions (that have a yPos of the targetRowNumber) cannot be the position of a sensor?
-export function getExcludedPositions(targetRowNumber: number): number[] {
+// The position of every sensor and the manhattan distance to their nearest beacon
+export function getSensorData(): { position: Position; manhattanDistance: number }[] {
   const lines = input.split("\n");
 
-  // The xPos values for the excluded positions
-  const excludedPositions: Set<number> = new Set();
-
-  // Parsing the sensor and beacon position
-  for (const line of lines) {
+  return lines.map((line) => {
     const [sensorDescription, beaconDescription] = line.split(":");
 
     const sensorXPos = sensorDescription.split(" ")[2].split("=")[1];
@@ -29,13 +25,30 @@ export function getExcludedPositions(targetRowNumber: number): number[] {
     const beaconPosition: Position = { xPos: parseInt(beaconXPos), yPos: parseInt(beaconYPos) };
 
     // The Manhattan distance between the sensor and the beacon
-    const distance = calculateManhattanDistance(sensorPosition, beaconPosition);
+    const manhattanDistance = calculateManhattanDistance(sensorPosition, beaconPosition);
 
-    for (let xPos = sensorPosition.xPos - distance; xPos <= sensorPosition.xPos + distance; xPos++) {
+    return { position: sensorPosition, manhattanDistance };
+  });
+}
+
+// What positions (that have a yPos of the targetRowNumber) cannot be the position of a sensor?
+export function getExcludedPositions(targetRowNumber: number): number[] {
+  const sensorData = getSensorData();
+
+  // The xPos values for the excluded positions
+  const excludedPositions: Set<number> = new Set();
+
+  // Parsing the sensor and beacon position
+  for (const sensor of sensorData) {
+    for (
+      let xPos = sensor.position.xPos - sensor.manhattanDistance;
+      xPos <= sensor.position.xPos + sensor.manhattanDistance;
+      xPos++
+    ) {
       const currentlyScannedPosition: Position = { xPos: xPos, yPos: targetRowNumber };
 
       // Within the distance between the sensor and beacon?
-      if (calculateManhattanDistance(sensorPosition, currentlyScannedPosition) <= distance) {
+      if (calculateManhattanDistance(sensor.position, currentlyScannedPosition) <= sensor.manhattanDistance) {
         excludedPositions.add(xPos);
       }
     }
