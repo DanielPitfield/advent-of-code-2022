@@ -51,4 +51,5 @@ function getTuningFrequency(maxPositionRestrcition: number): number | null {
   return null;
 }
 
-console.log(getTuningFrequency(maxPositionRestrcition));
+const tuningFrequency = getTuningFrequency(maxPositionRestrcition);
+console.log(tuningFrequency);

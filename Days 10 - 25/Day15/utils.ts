@@ -30,29 +30,3 @@ export function getSensorData(): { position: Position; manhattanDistance: number
     return { position: sensorPosition, manhattanDistance };
   });
 }
-
-// What positions (that have a yPos of the targetRowNumber) cannot be the position of a sensor?
-export function getExcludedPositions(targetRowNumber: number): number[] {
-  const sensorData = getSensorData();
-
-  // The xPos values for the excluded positions
-  const excludedPositions: Set<number> = new Set();
-
-  // Parsing the sensor and beacon position
-  for (const sensor of sensorData) {
-    for (
-      let xPos = sensor.position.xPos - sensor.manhattanDistance;
-      xPos <= sensor.position.xPos + sensor.manhattanDistance;
-      xPos++
-    ) {
-      const currentlyScannedPosition: Position = { xPos: xPos, yPos: targetRowNumber };
-
-      // Within the distance between the sensor and beacon?
-      if (calculateManhattanDistance(sensor.position, currentlyScannedPosition) <= sensor.manhattanDistance) {
-        excludedPositions.add(xPos);
-      }
-    }
-  }
-
-  return Array.from(excludedPositions);
-}
