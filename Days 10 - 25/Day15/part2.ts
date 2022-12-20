@@ -24,7 +24,7 @@ function getPositionCombinations(position: Position): Position[] {
 function getTuningFrequency(maxPositionRestrcition: number): number | null {
   for (const sensor of sensorData) {
     for (let xDiff = 0; xDiff <= sensor.manhattanDistance + 1; xDiff++) {
-      // As the xPos increases, the yDiff must decrease for the manhattan distance to stay the same
+      // As the xDiff increases, the yDiff must decrease for the manhattan distance to stay the same
       const yDiff = sensor.manhattanDistance + 1 - xDiff;
 
       const xPos = sensor.position.xPos + xDiff;
@@ -32,8 +32,8 @@ function getTuningFrequency(maxPositionRestrcition: number): number | null {
 
       const positionCombinations = getPositionCombinations({ xPos, yPos });
 
-      // Both xPos and yPos are within the restriction and the position is not detected by any sensor
       for (const position of positionCombinations) {
+        // Both xPos and yPos are within the restriction and the position is not detected by any sensor
         if (
           position.xPos >= 0 &&
           position.yPos >= 0 &&
@@ -48,6 +48,7 @@ function getTuningFrequency(maxPositionRestrcition: number): number | null {
     }
   }
 
+  // No distress signal could be found
   return null;
 }
 

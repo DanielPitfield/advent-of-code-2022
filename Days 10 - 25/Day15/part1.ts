@@ -30,6 +30,6 @@ function getExcludedPositions(targetRowNumber: number): number[] {
   return Array.from(excludedPositions);
 }
 
-// Subtract 1 as the sensor on the row doesn;t count as an excluded position
+// Subtract 1 as the sensor on the row doesn't count as an excluded position
 const numExcludedPositions = getExcludedPositions(targetRowNumber).length - 1;
 console.log(numExcludedPositions);

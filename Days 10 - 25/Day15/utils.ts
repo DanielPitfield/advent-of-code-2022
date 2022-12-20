@@ -9,7 +9,7 @@ export function calculateManhattanDistance(point1: Position, point2: Position): 
   return diffX + diffY;
 }
 
-// The position of every sensor and the manhattan distance to their nearest beacon
+// The position of every sensor and the manhattan distance to its nearest beacon
 export function getSensorData(): { position: Position; manhattanDistance: number }[] {
   const lines = input.split("\n");
 
