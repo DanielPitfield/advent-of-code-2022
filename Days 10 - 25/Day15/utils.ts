@@ -10,7 +10,7 @@ export function calculateManhattanDistance(point1: Position, point2: Position): 
 
 // What positions (that have a yPos of the targetRowNumber) cannot be the position of a sensor?
 export function getExcludedPositions(sensorPosition: Position, distance: number, targetRowNumber: number): number[] {
-  // What xPos (for the yPos of the targetRowNumber) are excluded positions?
+  // The xPos values for the excluded positions
   const targetRowXPositions: Set<number> = new Set();
 
   for (let xPos = sensorPosition.xPos - distance; xPos <= sensorPosition.xPos + distance; xPos++) {

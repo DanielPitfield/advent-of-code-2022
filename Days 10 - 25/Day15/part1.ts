@@ -33,4 +33,5 @@ for (const line of lines) {
 
 // How many positions on this row cannot be the position of a sensor?
 const numTargetExcludedPositions = new Set(allExcludedPositions.flat());
-console.log(numTargetExcludedPositions.size);
+// Don't count the sensor on the target row (therefore subtract 1)
+console.log(numTargetExcludedPositions.size - 1);
