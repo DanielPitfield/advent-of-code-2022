@@ -1,11 +1,14 @@
 import { Position } from "../../Days 1 - 9/Day9/utils";
 import { input } from "./input";
-import { calculateManhattanDistance, getExcludedPositions } from "./utils";
+import { calculateManhattanDistance, getNumExcludedPositions } from "./utils";
 
 // Array to hold arrays of all the excluded positions of each sensor
-const allExcludedPositions: Position[][] = [];
+const allNumExcludedPositions: number[] = [];
 
 const lines = input.split("\n");
+
+// What is the row number to check?
+const targetRowNumber = 2000000;
 
 // Parsing the sensor and beacon position
 for (const line of lines) {
@@ -21,15 +24,14 @@ for (const line of lines) {
 
   // The Manhattan distance between the sensor and the beacon
   const distance = calculateManhattanDistance(sensorPosition, beaconPosition);
-  // What positions can there not be another sensor (because the current sensor must be the closest to the beacon)?
-  const excludedPositions: Position[] = getExcludedPositions(sensorPosition, distance);
 
-  allExcludedPositions.push(excludedPositions);
+  // What positions can there not be another sensor (because the current sensor must be the closest to the beacon)?
+  const numExcludedPositions = getNumExcludedPositions(sensorPosition, distance, targetRowNumber);
+
+  allNumExcludedPositions.push(numExcludedPositions);
 }
 
-// What is the row number to check?
-const targetRowNumber = 2000000;
 // How many positions on this row cannot be the position of a sensor?
-const numTargetExcludedPositions = allExcludedPositions.flat().filter(position => position.yPos === targetRowNumber).length;
+const numTargetExcludedPositions = allNumExcludedPositions.reduce((a, b) => a + b, 0); //flat().filter(position => position.yPos === targetRowNumber).length;
 
 console.log(numTargetExcludedPositions);

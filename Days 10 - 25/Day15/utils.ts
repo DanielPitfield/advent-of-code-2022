@@ -8,33 +8,20 @@ export function calculateManhattanDistance(point1: Position, point2: Position): 
   return diffX + diffY;
 }
 
-// What positions can't have another sensor (when given a sensor position and the distance around it where another sensor cannot be)?
-export function getExcludedPositions(sensorPosition: Position, distance: number): Position[] {
-  const excludedPositions: Position[] = [];
+// What positions (that have a yPos of the targetRowNumber) cannot be the position of a sensor?
+export function getNumExcludedPositions(sensorPosition: Position, distance: number, targetRowNumber: number): number {
+  const minimumY = sensorPosition.yPos - distance;
+  const maximumY = sensorPosition.yPos + distance;
 
-  /*
-  FROM: the row (which is distance number of rows above the sensor position),
-  Through the row of the sensor position,
-  TO: the row (which is distance number of rows below the sensor position)
-  */
-  for (let yPos = sensorPosition.yPos - distance; yPos <= sensorPosition.yPos + distance; yPos++) {
-    // How many rows away from the sensor position?
-    const rowDiff = Math.abs(sensorPosition.yPos - yPos);
-    // How many positions will be excluded on this row (2n + 1)?
-    const numExcludedPositionsForRow = Math.abs(distance - rowDiff) * 2 + 1;
-    // Middle/center is the sensor, half of the rest of the positions to left, half on right
-    const distanceEitherWay = Math.floor((numExcludedPositionsForRow - 1) / 2);
-
-    /*
-    FROM: the column (which is distanceEitherWay to the left of the sensor position),
-    Through the column of the sensor position,
-    TO: the column (which is distanceEitherWay to the right of the sensor position)
-    */
-    for (let xPos = sensorPosition.xPos - distanceEitherWay; xPos <= sensorPosition.xPos + distanceEitherWay; xPos++) {
-      const excludedPosition: Position = { xPos: xPos, yPos: yPos };
-      excludedPositions.push(excludedPosition);
-    }
+  // None of the excluded positions will have a yPos which relates to the targetRowNumber
+  if (!(targetRowNumber > minimumY && targetRowNumber < maximumY)) {
+    return 0;
   }
 
-  return excludedPositions;
+  // How many rows away from the sensor position?
+  const rowDiff = Math.abs(sensorPosition.yPos - targetRowNumber);
+  // How many positions will be excluded on this row (2n + 1)?
+  const numExcludedPositionsForRow = Math.abs(distance - rowDiff) * 2 + 1;
+
+  return numExcludedPositionsForRow;
 }
