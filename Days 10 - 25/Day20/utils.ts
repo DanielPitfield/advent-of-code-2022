@@ -4,9 +4,29 @@ import { input } from "./input";
 export const initialList: number[] = input.split("\n").map((x) => parseInt(x));
 export const listLength = initialList.length;
 
-export function getNewIndex(index: number, value: number): number {
+export function getNewIndex(index: number, value: number): number | null {
   const relativeIndex: number = index + value;
-  return relativeIndex % (listLength - 1);
+
+  // Wrap to end of array (can't insert at start)
+  if (relativeIndex === 0) {
+    return listLength - 1;
+  }
+
+  // Within array bounds?
+  if (relativeIndex > 0 && relativeIndex <= listLength - 1) {
+    return relativeIndex;
+  }
+
+  // Circularly wrapping forwards
+  if (relativeIndex >= listLength) {
+    return relativeIndex % (listLength - 1);
+  }
+
+  if (relativeIndex < 0) {
+    return listLength + relativeIndex - 1;
+  }
+
+  return null;
 }
 
 export function getGroveSum(newList: number[]): number | null {
@@ -22,7 +42,7 @@ export function getGroveSum(newList: number[]): number | null {
   const positions: number[] = [1000, 2000, 3000];
 
   const groveValues: number[] = positions.map((position) => {
-    return newList[getNewIndex(foundIndex, position)];
+    return newList[getNewIndex(foundIndex, position) ?? 0];
   });
 
   return groveValues.reduce((a, b) => a + b, 0);
