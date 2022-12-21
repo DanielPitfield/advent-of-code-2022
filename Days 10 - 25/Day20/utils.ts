@@ -31,7 +31,6 @@ export function getNewIndex(index: number, value: number): number | null {
   return null;
 }
 
-// TODO: Incorrect sum
 export function getGroveSum(newList: { value: number; id: number }[]): number | null {
   // Where is the value 0 in the list?
   const foundIndex = newList.findIndex((x) => x.value === 0);
@@ -42,16 +41,10 @@ export function getGroveSum(newList: { value: number; id: number }[]): number | 
   }
 
   // The positions to check
-  const positions: number[] = [1000, 2000, 3000];
+  const grovePositions: number[] = [1000, 2000, 3000];
 
-  const groveValues: number[] = positions.map((position) => {
-    const positionIndex = getNewIndex(foundIndex, position);
-    console.log(positionIndex)
-
-    if (positionIndex === null) {
-      return 0;
-    }
-
+  const groveValues: number[] = grovePositions.map((position) => {
+    const positionIndex = (position + foundIndex) % listLength;
     return newList[positionIndex].value;
   });
 
