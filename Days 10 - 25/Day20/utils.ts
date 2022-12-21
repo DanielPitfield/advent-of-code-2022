@@ -1,7 +1,9 @@
 import { input } from "./input";
 
 // The list of numbers in the initial arrangement
-export const initialList: number[] = input.split("\n").map((x) => parseInt(x));
+export const initialList: { value: number; id: number }[] = input
+  .split("\n")
+  .map((value, index) => ({ value: parseInt(value), id: index }));
 export const listLength = initialList.length;
 
 export function getNewIndex(index: number, value: number): number | null {
@@ -29,9 +31,10 @@ export function getNewIndex(index: number, value: number): number | null {
   return null;
 }
 
-export function getGroveSum(newList: number[]): number | null {
+// TODO: Incorrect sum
+export function getGroveSum(newList: { value: number; id: number }[]): number | null {
   // Where is the value 0 in the list?
-  const foundIndex = newList.findIndex((num) => num === 0);
+  const foundIndex = newList.findIndex((x) => x.value === 0);
 
   // The value 0 couldn't be found in the list
   if (foundIndex === -1) {
@@ -42,7 +45,14 @@ export function getGroveSum(newList: number[]): number | null {
   const positions: number[] = [1000, 2000, 3000];
 
   const groveValues: number[] = positions.map((position) => {
-    return newList[getNewIndex(foundIndex, position) ?? 0];
+    const positionIndex = getNewIndex(foundIndex, position);
+    console.log(positionIndex)
+
+    if (positionIndex === null) {
+      return 0;
+    }
+
+    return newList[positionIndex].value;
   });
 
   return groveValues.reduce((a, b) => a + b, 0);

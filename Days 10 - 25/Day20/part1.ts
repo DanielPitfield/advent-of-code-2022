@@ -1,15 +1,15 @@
 import { getGroveSum, getNewIndex, initialList } from "./utils";
 
-function getNewList(): number[] {
+function getNewList(): { value: number; id: number }[] {
   // Make a copy of the initial arrangement
-  const newList: number[] = initialList.slice();
+  const newList: { value: number; id: number }[] = initialList.slice();
 
   // For each value in the initialList
   for (let i = 0; i < initialList.length; i++) {
-    const value = initialList[i];
-    // TODO: The numbers are non-unique, this won't work
-    const oldIndex = newList.findIndex((num) => num === value);
-    const newIndex = getNewIndex(oldIndex, value);
+    const item = initialList[i];
+
+    const oldIndex = newList.findIndex((x) => x.value === item.value && x.id === item.id);
+    const newIndex = getNewIndex(oldIndex, item.value);
 
     if (newIndex === null) {
       continue;
