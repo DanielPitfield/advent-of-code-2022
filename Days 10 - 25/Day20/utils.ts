@@ -57,11 +57,11 @@ export function getMixedList(listConfig: { hasDecryptionKey: boolean; numListMix
         mixedList.reverse();
       }
 
-      const oldIndex = mixedList.indexOf(item);      
-      const newIndex = (oldIndex + Math.abs(item.value)) % mixedList.length;
-
+      const oldIndex = mixedList.indexOf(item);
       // Remove from old position
       mixedList.splice(oldIndex, 1);
+
+      const newIndex = (oldIndex + Math.abs(item.value)) % mixedList.length;
       // Insert into new position
       mixedList.splice(newIndex, 0, item);
 
