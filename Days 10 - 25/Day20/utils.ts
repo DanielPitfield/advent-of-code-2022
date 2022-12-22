@@ -52,17 +52,23 @@ export function getMixedList(listConfig: { hasDecryptionKey: boolean; numListMix
     for (let j = 0; j < initialList.length; j++) {
       const item = initialList[j];
 
-      const oldIndex = mixedList.findIndex((x) => x.value === item.value && x.id === item.id);
-      const newIndex = getNewIndex(oldIndex, item.value, initialList.length);
-
-      if (newIndex === null) {
-        continue;
+      // The list is circular so the list can be reversed instead of finding the modulus using negative numbers
+      if (item.value < 0) {
+        mixedList.reverse();
       }
 
+      const oldIndex = mixedList.indexOf(item);      
+      const newIndex = (oldIndex + Math.abs(item.value)) % mixedList.length;
+
       // Remove from old position
-      const movedValues = mixedList.splice(oldIndex, 1);
+      mixedList.splice(oldIndex, 1);
       // Insert into new position
-      mixedList.splice(newIndex, 0, movedValues[0]);
+      mixedList.splice(newIndex, 0, item);
+
+      // Undo reversing (if previously reversed)
+      if (item.value < 0) {
+        mixedList.reverse();
+      }
     }
   }
 
@@ -71,7 +77,7 @@ export function getMixedList(listConfig: { hasDecryptionKey: boolean; numListMix
 
 export function getGroveSum(newList: ListItem[]): number | null {
   // Where is the value 0 in the list?
-  const foundIndex = newList.findIndex((x) => x.value === 0);
+  const foundIndex = newList.findIndex((item) => item.value === 0);
 
   // The value 0 couldn't be found in the list
   if (foundIndex === -1) {
