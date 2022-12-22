@@ -1,6 +1,8 @@
 import { input } from "./input";
 
-type OperatorSymbol = "/" | "-" | "+" | "*";
+export const operatorSymbols = ["/" , "-" , "+" , "*"] as const;
+export type OperatorSymbol = typeof operatorSymbols[number];
+
 type Monkey = {
   monkeyNumber: number;
   items: number[];
@@ -14,7 +16,7 @@ type Monkey = {
 
 const initialMonkeyNotes = input.split("\n\n");
 
-const operatorMappings: {
+export const operatorMappings: {
   symbol: OperatorSymbol;
   function: (num1: number, num2: number) => number;
 }[] = [
