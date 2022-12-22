@@ -15,29 +15,8 @@ function getIntiialList(listConfig: { hasDecryptionKey: boolean }): ListItem[] {
   return initialList.map((x) => ({ value: x.value * DECRYPTION_KEY, id: x.id }));
 }
 
-function getNewIndex(index: number, value: number, listLength: number): number | null {
-  const relativeIndex: number = index + value;
-
-  // Wrap to end of array (can't insert at start)
-  if (relativeIndex === 0) {
-    return listLength - 1;
-  }
-
-  // Within array bounds?
-  if (relativeIndex > 0 && relativeIndex <= listLength - 1) {
-    return relativeIndex;
-  }
-
-  // Circularly wrapping forwards
-  if (relativeIndex >= listLength) {
-    return relativeIndex % (listLength - 1);
-  }
-
-  if (relativeIndex < 0) {
-    return listLength + relativeIndex - 1;
-  }
-
-  return null;
+function getNewIndex(index: number, value: number, listLength: number): number {
+  return (index + Math.abs(value)) % listLength;
 }
 
 export function getMixedList(listConfig: { hasDecryptionKey: boolean; numListMixes: number }): ListItem[] {
@@ -61,7 +40,7 @@ export function getMixedList(listConfig: { hasDecryptionKey: boolean; numListMix
       // Remove from old position
       mixedList.splice(oldIndex, 1);
 
-      const newIndex = (oldIndex + Math.abs(item.value)) % mixedList.length;
+      const newIndex = getNewIndex(oldIndex, item.value, mixedList.length);
       // Insert into new position
       mixedList.splice(newIndex, 0, item);
 
@@ -75,9 +54,9 @@ export function getMixedList(listConfig: { hasDecryptionKey: boolean; numListMix
   return mixedList;
 }
 
-export function getGroveSum(newList: ListItem[]): number | null {
+export function getGroveSum(list: ListItem[]): number | null {
   // Where is the value 0 in the list?
-  const foundIndex = newList.findIndex((item) => item.value === 0);
+  const foundIndex = list.findIndex((item) => item.value === 0);
 
   // The value 0 couldn't be found in the list
   if (foundIndex === -1) {
@@ -85,11 +64,11 @@ export function getGroveSum(newList: ListItem[]): number | null {
   }
 
   // The positions to check
-  const grovePositions: number[] = [1000, 2000, 3000];
+  const groveIndexes: number[] = [1000, 2000, 3000];
 
-  const groveValues: number[] = grovePositions.map((position) => {
-    const positionIndex = (position + foundIndex) % newList.length;
-    return newList[positionIndex].value;
+  const groveValues: number[] = groveIndexes.map((position) => {
+    const positionIndex = getNewIndex(foundIndex, position, list.length);
+    return list[positionIndex].value;
   });
 
   return groveValues.reduce((a, b) => a + b, 0);
