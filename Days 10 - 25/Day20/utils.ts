@@ -1,12 +1,21 @@
 import { input } from "./input";
 
-// The list of numbers in the initial arrangement
-export const initialList: { value: number; id: number }[] = input
-  .split("\n")
-  .map((value, index) => ({ value: parseInt(value), id: index }));
-export const listLength = initialList.length;
+export type ListItem = { value: number; id: number };
 
-export function getNewIndex(index: number, value: number): number | null {
+// The list of numbers in the initial arrangement
+export function getIntiialList(listConfig: { hasDecryptionKey: boolean }): ListItem[] {
+  const initialList: ListItem[] = input.split("\n").map((value, index) => ({ value: parseInt(value), id: index }));
+
+  if (!listConfig.hasDecryptionKey) {
+    return initialList;
+  }
+
+  const DECRYPTION_KEY = 811589153;
+
+  return initialList.map((x) => ({ value: x.value * DECRYPTION_KEY, id: x.id }));
+}
+
+export function getNewIndex(index: number, value: number, listLength: number): number | null {
   const relativeIndex: number = index + value;
 
   // Wrap to end of array (can't insert at start)
@@ -31,7 +40,36 @@ export function getNewIndex(index: number, value: number): number | null {
   return null;
 }
 
-export function getGroveSum(newList: { value: number; id: number }[]): number | null {
+export function getNewList(listConfig: { hasDecryptionKey: boolean; numListMixes: number }): ListItem[] {
+  const initialList: ListItem[] = getIntiialList({ hasDecryptionKey: listConfig.hasDecryptionKey });
+
+  // Make a copy of the initial arrangement
+  const newList: ListItem[] = initialList.slice();
+
+  // numListMixes number of times
+  for (let i = 0; i < listConfig.numListMixes; i++) {
+    // For each value in the initialList
+    for (let j = 0; j < initialList.length; j++) {
+      const item = initialList[j];
+
+      const oldIndex = newList.findIndex((x) => x.value === item.value && x.id === item.id);
+      const newIndex = getNewIndex(oldIndex, item.value, initialList.length);
+
+      if (newIndex === null) {
+        continue;
+      }
+
+      // Remove from old position
+      const movedValues = newList.splice(oldIndex, 1);
+      // Insert into new position
+      newList.splice(newIndex, 0, movedValues[0]);
+    }
+  }
+
+  return newList;
+}
+
+export function getGroveSum(newList: ListItem[]): number | null {
   // Where is the value 0 in the list?
   const foundIndex = newList.findIndex((x) => x.value === 0);
 
@@ -44,7 +82,7 @@ export function getGroveSum(newList: { value: number; id: number }[]): number | 
   const grovePositions: number[] = [1000, 2000, 3000];
 
   const groveValues: number[] = grovePositions.map((position) => {
-    const positionIndex = (position + foundIndex) % listLength;
+    const positionIndex = (position + foundIndex) % newList.length;
     return newList[positionIndex].value;
   });
 

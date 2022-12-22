@@ -38,10 +38,8 @@ export function getInitialItemStacks(): string[][] {
   return itemStacks.map((stack) => stack.reverse());
 }
 
-type MoveConfig = { isMultipleMoveAllowed: false } | { isMultipleMoveAllowed: true };
-
 // The item stacks after each instruction from the data is applied
-export function getMovedItemStacks(moveConfig: MoveConfig): string[][] {
+export function getMovedItemStacks(moveConfig: { isMultipleMoveAllowed: boolean }): string[][] {
   const itemStacks = getInitialItemStacks();
   const instructions: string[] = instructionsData.split("\n");
 
