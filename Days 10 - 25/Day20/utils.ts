@@ -1,9 +1,9 @@
 import { input } from "./input";
 
-export type ListItem = { value: number; id: number };
+type ListItem = { value: number; id: number };
 
 // The list of numbers in the initial arrangement
-export function getIntiialList(listConfig: { hasDecryptionKey: boolean }): ListItem[] {
+function getIntiialList(listConfig: { hasDecryptionKey: boolean }): ListItem[] {
   const initialList: ListItem[] = input.split("\n").map((value, index) => ({ value: parseInt(value), id: index }));
 
   if (!listConfig.hasDecryptionKey) {
@@ -15,7 +15,7 @@ export function getIntiialList(listConfig: { hasDecryptionKey: boolean }): ListI
   return initialList.map((x) => ({ value: x.value * DECRYPTION_KEY, id: x.id }));
 }
 
-export function getNewIndex(index: number, value: number, listLength: number): number | null {
+function getNewIndex(index: number, value: number, listLength: number): number | null {
   const relativeIndex: number = index + value;
 
   // Wrap to end of array (can't insert at start)
@@ -40,11 +40,11 @@ export function getNewIndex(index: number, value: number, listLength: number): n
   return null;
 }
 
-export function getNewList(listConfig: { hasDecryptionKey: boolean; numListMixes: number }): ListItem[] {
+export function getMixedList(listConfig: { hasDecryptionKey: boolean; numListMixes: number }): ListItem[] {
   const initialList: ListItem[] = getIntiialList({ hasDecryptionKey: listConfig.hasDecryptionKey });
 
   // Make a copy of the initial arrangement
-  const newList: ListItem[] = initialList.slice();
+  const mixedList: ListItem[] = initialList.slice();
 
   // numListMixes number of times
   for (let i = 0; i < listConfig.numListMixes; i++) {
@@ -52,7 +52,7 @@ export function getNewList(listConfig: { hasDecryptionKey: boolean; numListMixes
     for (let j = 0; j < initialList.length; j++) {
       const item = initialList[j];
 
-      const oldIndex = newList.findIndex((x) => x.value === item.value && x.id === item.id);
+      const oldIndex = mixedList.findIndex((x) => x.value === item.value && x.id === item.id);
       const newIndex = getNewIndex(oldIndex, item.value, initialList.length);
 
       if (newIndex === null) {
@@ -60,13 +60,13 @@ export function getNewList(listConfig: { hasDecryptionKey: boolean; numListMixes
       }
 
       // Remove from old position
-      const movedValues = newList.splice(oldIndex, 1);
+      const movedValues = mixedList.splice(oldIndex, 1);
       // Insert into new position
-      newList.splice(newIndex, 0, movedValues[0]);
+      mixedList.splice(newIndex, 0, movedValues[0]);
     }
   }
 
-  return newList;
+  return mixedList;
 }
 
 export function getGroveSum(newList: ListItem[]): number | null {

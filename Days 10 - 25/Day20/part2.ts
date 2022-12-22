@@ -1,4 +1,6 @@
-import { getGroveSum, getNewList } from "./utils";
+import { getGroveSum, getMixedList } from "./utils";
 
-const groveSum = getGroveSum(getNewList({ hasDecryptionKey: true, numListMixes: 10 }));
+const mixedList = getMixedList({ hasDecryptionKey: true, numListMixes: 10 });
+const groveSum = getGroveSum(mixedList);
+
 console.log(groveSum);
