@@ -1,8 +1,6 @@
 import { Position } from "../../Days 1 - 9/Day9/utils";
 import { getRockWalls } from "./utils";
 
-// Where does the sand start pouring in from?
-const startingSandPosition: Position = { xPos: 500, yPos: 0 };
 // At what positions are there rock walls?
 const rockWalls: Position[] = getRockWalls();
 // At what yPos is the bottom floor of the cave?
@@ -20,7 +18,8 @@ function isPositionOccupied(position: Position): boolean {
 
 // Drop one unit of sand (recording where it comes to rest)
 function dropSand(): Position | null {
-  const currentSandPosition: Position = startingSandPosition;
+  // The sand unit's position starts as the postion from where the sand is poured in
+  const currentSandPosition: Position = { xPos: 500, yPos: 0 };
 
   while (true) {
     // Sand has reached or surpassed the yPos of the lowest wall
