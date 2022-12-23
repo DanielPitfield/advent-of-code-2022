@@ -55,12 +55,12 @@ export function getRockWalls(): Position[] {
   return rockWalls.flat();
 }
 
-export function getFloorYPos(rockWalls: Position[], isFloorSolid: boolean): number {
+export function getFloorYPos(floorConfig: { rockWalls: Position[]; isFloorSolid: boolean }): number {
   // At what yPos is the lowest rock wall of the cave?
-  const highestYPos = Math.max(...rockWalls.map((position) => position.yPos));
+  const highestYPos = Math.max(...floorConfig.rockWalls.map((position) => position.yPos));
 
   // There is no floor, only the void
-  if (!isFloorSolid) {
+  if (!floorConfig.isFloorSolid) {
     return highestYPos;
   }
 
@@ -87,6 +87,11 @@ export function dropSandUnit(allSandPositions: Position[], rockWalls: Position[]
       return null;
     }
 
+    // Source of the sand is blocked
+    if (isPositionOccupied(allSandPositions, rockWalls, { xPos: 500, yPos: 0 })) {
+      return null;
+    }
+
     // Directly down
     const down: Position = { xPos: currentSandPosition.xPos, yPos: currentSandPosition.yPos + 1 };
     if (!isPositionOccupied(allSandPositions, rockWalls, down)) {
@@ -109,6 +114,8 @@ export function dropSandUnit(allSandPositions: Position[], rockWalls: Position[]
       currentSandPosition.yPos++;
       continue;
     }
+
+    // TODO: Solid floor 
 
     // Come to rest
     return currentSandPosition;

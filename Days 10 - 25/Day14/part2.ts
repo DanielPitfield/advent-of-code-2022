@@ -6,7 +6,7 @@ const allSandPositions: Position[] = [];
 // At what positions are there rock walls?
 const rockWalls: Position[] = getRockWalls();
 // At what yPos is the lowest rock wall of the cave?
-const floorYPos = getFloorYPos({ rockWalls, isFloorSolid: false });
+const floorYPos = getFloorYPos({ rockWalls, isFloorSolid: true });
 
 // Keep pouring sand units until sand starts pouring past the floor (lowest rock wall)
 function pourSand() {
