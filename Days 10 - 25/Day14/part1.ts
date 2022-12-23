@@ -17,7 +17,7 @@ function isPositionOccupied(position: Position): boolean {
 }
 
 // Drop one unit of sand (recording where it comes to rest)
-function dropSand(): Position | null {
+function dropSandUnit(): Position | null {
   // The sand unit's position starts as the postion from where the sand is poured in
   const currentSandPosition: Position = { xPos: 500, yPos: 0 };
 
@@ -30,36 +30,41 @@ function dropSand(): Position | null {
     // Directly down
     if (!isPositionOccupied({ xPos: currentSandPosition.xPos, yPos: currentSandPosition.yPos + 1 })) {
       currentSandPosition.yPos++;
+      continue;
     }
 
     // Diagonally down and left
-    else if (!isPositionOccupied({ xPos: currentSandPosition.xPos - 1, yPos: currentSandPosition.yPos + 1 })) {
+    if (!isPositionOccupied({ xPos: currentSandPosition.xPos - 1, yPos: currentSandPosition.yPos + 1 })) {
       currentSandPosition.xPos--;
       currentSandPosition.yPos++;
+      continue;
     }
 
     // Diagonally down and right
-    else if (!isPositionOccupied({ xPos: currentSandPosition.xPos + 1, yPos: currentSandPosition.yPos + 1 })) {
+    if (!isPositionOccupied({ xPos: currentSandPosition.xPos + 1, yPos: currentSandPosition.yPos + 1 })) {
       currentSandPosition.xPos++;
       currentSandPosition.yPos++;
+      continue;
     }
 
     // Come to rest
-    else {
-      return currentSandPosition;
+    return currentSandPosition;
+  }
+}
+
+// Keep pouring sand units until sand starts pouring past the floor (lowest rock wall)
+function pourSand() {
+  while (true) {
+    const result = dropSandUnit();
+
+    if (result === null) {
+      return;
     }
+
+    allSandPositions.push(result);
   }
 }
 
-while (true) {
-  const result = dropSand();
-
-  if (result === null) {
-    break;
-  }
-
-  allSandPositions.push(result);
-}
-
+pourSand();
 const numSandUnits = allSandPositions.length;
 console.log(numSandUnits);
