@@ -28,7 +28,7 @@ export function getAllLinePoints(point1: Position, point2: Position): Position[]
 }
 
 // At what positions is there a rock wall (denoted by the symbol # in the example)?
-export function getRockWalls(): Position[] {
+export function getRockWalls(floorConfig: { includeFloor: boolean }): Position[] {
   const lines = input.split("\n");
 
   const rockWalls: Position[][] = [];
@@ -50,6 +50,17 @@ export function getRockWalls(): Position[] {
       const entireLine = getAllLinePoints(linePoints[i], linePoints[i + 1]);
       rockWalls.push(entireLine);
     }
+  }
+
+  if (floorConfig.includeFloor) {
+    const FLOOR_HALF_WIDTH = 1000;
+    const floorYPos = getFloorYPos({ rockWalls: rockWalls.flat(), isFloorSolid: true });
+    
+    const startOfFloor: Position = { xPos: -(FLOOR_HALF_WIDTH), yPos: floorYPos };
+    const endOfFloor: Position = { xPos: FLOOR_HALF_WIDTH, yPos: floorYPos };
+    const floor: Position[] = getAllLinePoints(startOfFloor, endOfFloor);
+
+    rockWalls.push(floor);
   }
 
   return rockWalls.flat();
@@ -88,7 +99,8 @@ export function dropSandUnit(allSandPositions: Position[], rockWalls: Position[]
     }
 
     // Source of the sand is blocked
-    if (isPositionOccupied(allSandPositions, rockWalls, { xPos: 500, yPos: 0 })) {
+    const sourcePosition: Position = { xPos: 500, yPos: 0 };
+    if (isPositionOccupied(allSandPositions, rockWalls, sourcePosition)) {
       return null;
     }
 
@@ -114,8 +126,6 @@ export function dropSandUnit(allSandPositions: Position[], rockWalls: Position[]
       currentSandPosition.yPos++;
       continue;
     }
-
-    // TODO: Solid floor 
 
     // Come to rest
     return currentSandPosition;
