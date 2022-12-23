@@ -13,7 +13,7 @@ const allSandPositions: Position[] = [];
 // Is there sand or a rock wall at the provided position?
 function isPositionOccupied(position: Position): boolean {
   return (
-    allSandPositions.some((sand) => sand.xPos == position.xPos && sand.yPos === position.yPos) ||
+    allSandPositions.some((sand) => sand.xPos === position.xPos && sand.yPos === position.yPos) ||
     rockWalls.some((rock) => rock.xPos === position.xPos && rock.yPos === position.yPos)
   );
 }
@@ -23,40 +23,32 @@ function dropSand(): Position | null {
   const currentSandPosition: Position = startingSandPosition;
 
   while (true) {
-    const endingCondition: boolean =
-      // Fallen off left
-      currentSandPosition.xPos <= 0 ||
-      // Filling above starting position
-      currentSandPosition.yPos <= startingSandPosition.yPos ||
-      // Reached past the floor
-      currentSandPosition.yPos >= floorYPos;
-
-    if (allSandPositions.length > 0 && endingCondition) {
+    // Sand has reached or surpassed the yPos of the lowest wall
+    if (currentSandPosition.yPos >= floorYPos) {
       return null;
     }
 
     // Directly down
     if (!isPositionOccupied({ xPos: currentSandPosition.xPos, yPos: currentSandPosition.yPos + 1 })) {
       currentSandPosition.yPos++;
-      continue;
     }
 
     // Diagonally down and left
-    if (!isPositionOccupied({ xPos: currentSandPosition.xPos - 1, yPos: currentSandPosition.yPos + 1 })) {
+    else if (!isPositionOccupied({ xPos: currentSandPosition.xPos - 1, yPos: currentSandPosition.yPos + 1 })) {
       currentSandPosition.xPos--;
       currentSandPosition.yPos++;
-      continue;
     }
 
     // Diagonally down and right
-    if (!isPositionOccupied({ xPos: currentSandPosition.xPos + 1, yPos: currentSandPosition.yPos + 1 })) {
+    else if (!isPositionOccupied({ xPos: currentSandPosition.xPos + 1, yPos: currentSandPosition.yPos + 1 })) {
       currentSandPosition.xPos++;
       currentSandPosition.yPos++;
-      continue;
     }
 
     // Come to rest
-    return currentSandPosition;
+    else {
+      return currentSandPosition;
+    }
   }
 }
 
