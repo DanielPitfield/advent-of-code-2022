@@ -1,7 +1,7 @@
 import { Position } from "../../Days 1 - 9/Day9/utils";
 import { input } from "./input";
 
-export function getAllPointsBetween(point1: Position, point2: Position): Position[] {
+export function getAllLinePoints(point1: Position, point2: Position): Position[] {
   const points: Position[] = [];
 
   // Horizontal line
@@ -9,8 +9,8 @@ export function getAllPointsBetween(point1: Position, point2: Position): Positio
     const startingXPos = Math.min(point1.xPos, point2.xPos);
     const endingXPos = Math.max(point1.xPos, point2.xPos);
 
-    for (let i = startingXPos + 1; i < endingXPos; i++) {
-      points.push({ xPos: i, yPos: point1.yPos });
+    for (let xPos = startingXPos; xPos <= endingXPos; xPos++) {
+      points.push({ xPos, yPos: point1.yPos });
     }
   }
 
@@ -19,8 +19,8 @@ export function getAllPointsBetween(point1: Position, point2: Position): Positio
     const startingYPos = Math.min(point1.yPos, point2.yPos);
     const endingYPos = Math.max(point1.yPos, point2.yPos);
 
-    for (let i = startingYPos + 1; i < endingYPos; i++) {
-      points.push({ xPos: point1.xPos, yPos: i });
+    for (let yPos = startingYPos; yPos <= endingYPos; yPos++) {
+      points.push({ xPos: point1.xPos, yPos });
     }
   }
 
@@ -46,17 +46,10 @@ export function getRockWalls(): Position[] {
         return { xPos: parseInt(point[0]), yPos: parseInt(point[1]) };
       });
 
-    const entireLine: Position[][] = [];
-
     for (let i = 0; i < linePoints.length - 1; i++) {
-      // Push the line point first
-      entireLine.push([linePoints[i]]);
-      // Then the points between this point and the next line point
-      entireLine.push(getAllPointsBetween(linePoints[i], linePoints[i + 1]));
+      const entireLine = getAllLinePoints(linePoints[i], linePoints[i + 1]);
+      rockWalls.push(entireLine);
     }
-
-    // Add the entire line to rockWalls
-    rockWalls.push(entireLine.flat());
   }
 
   return rockWalls.flat();
