@@ -55,8 +55,8 @@ export function getRockWalls(floorConfig: { includeFloor: boolean }): Position[]
   if (floorConfig.includeFloor) {
     const FLOOR_HALF_WIDTH = 1000;
     const floorYPos = getFloorYPos({ rockWalls: rockWalls.flat(), isFloorSolid: true });
-    
-    const startOfFloor: Position = { xPos: -(FLOOR_HALF_WIDTH), yPos: floorYPos };
+
+    const startOfFloor: Position = { xPos: -FLOOR_HALF_WIDTH, yPos: floorYPos };
     const endOfFloor: Position = { xPos: FLOOR_HALF_WIDTH, yPos: floorYPos };
     const floor: Position[] = getAllLinePoints(startOfFloor, endOfFloor);
 
@@ -129,5 +129,21 @@ export function dropSandUnit(allSandPositions: Position[], rockWalls: Position[]
 
     // Come to rest
     return currentSandPosition;
+  }
+}
+
+// Keep pouring sand units until sand starts pouring past the floor (lowest rock wall) or blocks the source
+export function getRestingSandPositions(rockWalls: Position[], floorYPos: number) {
+  // Keep track of what positions the sand has come to rest/settled at
+  const allSandPositions: Position[] = [];
+
+  while (true) {
+    const result = dropSandUnit(allSandPositions, rockWalls, floorYPos);
+
+    if (result === null) {
+      return allSandPositions;
+    }
+
+    allSandPositions.push(result);
   }
 }
