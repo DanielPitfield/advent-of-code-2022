@@ -23,8 +23,15 @@ function dropSand(): Position | null {
   const currentSandPosition: Position = startingSandPosition;
 
   while (true) {
-    // Fallen off left, filling above starting position, or somehow reached past the floor
-    if (currentSandPosition.xPos < 0 || currentSandPosition.yPos < 0 || currentSandPosition.yPos >= floorYPos) {
+    const endingCondition: boolean =
+      // Fallen off left
+      currentSandPosition.xPos <= 0 ||
+      // Filling above starting position
+      currentSandPosition.yPos <= startingSandPosition.yPos ||
+      // Reached past the floor
+      currentSandPosition.yPos >= floorYPos;
+
+    if (allSandPositions.length > 0 && endingCondition) {
       return null;
     }
 
