@@ -54,3 +54,63 @@ export function getRockWalls(): Position[] {
 
   return rockWalls.flat();
 }
+
+export function getFloorYPos(rockWalls: Position[], isFloorSolid: boolean): number {
+  // At what yPos is the lowest rock wall of the cave?
+  const highestYPos = Math.max(...rockWalls.map((position) => position.yPos));
+
+  // There is no floor, only the void
+  if (!isFloorSolid) {
+    return highestYPos;
+  }
+
+  // When the floor is solid, the floor is 2 positions below the lowest rock wall
+  return highestYPos + 2;
+}
+
+// Is there sand or a rock wall at the provided position?
+export function isPositionOccupied(allSandPositions: Position[], rockWalls: Position[], position: Position): boolean {
+  return (
+    allSandPositions.some((sand) => sand.xPos === position.xPos && sand.yPos === position.yPos) ||
+    rockWalls.some((rock) => rock.xPos === position.xPos && rock.yPos === position.yPos)
+  );
+}
+
+// Drop one unit of sand (recording where it comes to rest)
+export function dropSandUnit(allSandPositions: Position[], rockWalls: Position[], floorYPos: number): Position | null {
+  // The sand unit's position starts as the postion from where the sand is poured in
+  const currentSandPosition: Position = { xPos: 500, yPos: 0 };
+
+  while (true) {
+    // Sand has reached or surpassed the yPos of the lowest wall
+    if (currentSandPosition.yPos >= floorYPos) {
+      return null;
+    }
+
+    // Directly down
+    const down: Position = { xPos: currentSandPosition.xPos, yPos: currentSandPosition.yPos + 1 };
+    if (!isPositionOccupied(allSandPositions, rockWalls, down)) {
+      currentSandPosition.yPos++;
+      continue;
+    }
+
+    // Diagonally down and left
+    const downLeft: Position = { xPos: currentSandPosition.xPos - 1, yPos: currentSandPosition.yPos + 1 };
+    if (!isPositionOccupied(allSandPositions, rockWalls, downLeft)) {
+      currentSandPosition.xPos--;
+      currentSandPosition.yPos++;
+      continue;
+    }
+
+    // Diagonally down and right
+    const downRight: Position = { xPos: currentSandPosition.xPos + 1, yPos: currentSandPosition.yPos + 1 };
+    if (!isPositionOccupied(allSandPositions, rockWalls, downRight)) {
+      currentSandPosition.xPos++;
+      currentSandPosition.yPos++;
+      continue;
+    }
+
+    // Come to rest
+    return currentSandPosition;
+  }
+}
