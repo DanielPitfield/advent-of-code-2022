@@ -7,7 +7,7 @@ export const initialMonkeyJobs: MonkeyJob[] = input.split("\n").map((monkey) => 
   return { name, value };
 });
 
-export function isAnotherMonkeyValue(value: string): boolean {
+export function hasAnotherMonkeyValue(value: string): boolean {
   const alphabetString: string = "abcdefghijklmnopqrstuvwxyz";
   const lowercaseArray: string[] = alphabetString.split("");
 
@@ -17,12 +17,16 @@ export function isAnotherMonkeyValue(value: string): boolean {
 // Map over the monkeyJobs replacing any string parts of the job value with known values
 export function replaceMonkeyJobValues(monkeyJobs: MonkeyJob[]): MonkeyJob[] {
   return monkeyJobs.map((monkeyJob) => {
+    if (!hasAnotherMonkeyValue(monkeyJob.value)) {
+      return monkeyJob;
+    }
+
     // The operands and operators of the monkey job's value
     const valueParts: string[] = monkeyJob.value.split(" ");
 
     const replacedParts: string[] = valueParts.map((part) => {
       // A pointer to another monkey's value
-      if (isAnotherMonkeyValue(part)) {
+      if (hasAnotherMonkeyValue(part)) {
         // Replace with the value of the monkey that has the name of the part
         return monkeyJobs.find((monkeyJob) => monkeyJob.name === part)?.value ?? part;
       }
@@ -37,10 +41,14 @@ export function replaceMonkeyJobValues(monkeyJobs: MonkeyJob[]): MonkeyJob[] {
 
 export function evaluateMonkeyJobValues(monkeyJobs: MonkeyJob[]): MonkeyJob[] {
   return monkeyJobs.map((monkeyJob) => {
+    if (!hasAnotherMonkeyValue(monkeyJob.value)) {
+      return monkeyJob;
+    }
+
     const valueParts: string[] = monkeyJob.value.split(" ");
 
     // There are no parts which point to the values of other monkeys
-    if (valueParts.every((part) => !isAnotherMonkeyValue(part))) {
+    if (valueParts.every((part) => !hasAnotherMonkeyValue(part))) {
       // Evaluate the expression
       const newValue = parseInt(eval(monkeyJob.value)).toString();
       return { ...monkeyJob, value: newValue };
