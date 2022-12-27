@@ -19,7 +19,7 @@ const initialMonkeys: Monkey[] = input.split("\n").map((monkey) => {
 
   return {
     name: name,
-    value: Number(left),
+    value: parseInt(left),
     left: left,
     right: right,
     operation: operator,
@@ -34,15 +34,17 @@ export const monkeys: MonkeyMap = initialMonkeys.reduce((monkeyMap: MonkeyMap, c
   };
 }, {});
 
-export function getMonkeyValue(monkey: Monkey): number {
+export function getMonkeyValue(monkeyName: string): number {
+  const monkey: Monkey = monkeys[monkeyName];
+
   // Already a numeric value
   if (monkey.operation === undefined) {
     return monkey.value;
   }
 
-  // Otherwise need to evaluate the expression
-  const left = getMonkeyValue(monkeys[monkey.left]);
-  const right = getMonkeyValue(monkeys[monkey.right]);
+  // Otherwise need to evaluate both sides and the expression
+  const left = getMonkeyValue(monkey.left);
+  const right = getMonkeyValue(monkey.right);
 
   switch (monkey.operation) {
     case "+":

@@ -1,6 +1,4 @@
-import { getMonkeyValue, monkeys } from "./utils";
+import { getMonkeyValue } from "./utils";
 
-const rootMonkey = monkeys["root"];
-const rootMonkeyValue = getMonkeyValue(rootMonkey);
-
+const rootMonkeyValue = getMonkeyValue("root");
 console.log(rootMonkeyValue);
