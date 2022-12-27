@@ -6,5 +6,5 @@ const allCubesExposedSurfaceAreas: number[] = allCubes.map((cube) => {
 });
 
 // Sum the surface area of every cube together
-const totalSurfaceArea: number = allCubesExposedSurfaceAreas.reduce((a, b) => a + b, 0);
+export const totalSurfaceArea: number = allCubesExposedSurfaceAreas.reduce((a, b) => a + b, 0);
 console.log(totalSurfaceArea);

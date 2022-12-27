@@ -1,6 +1,7 @@
 import { input } from "./input";
 
-type Cube = { xPos: number; yPos: number; zPos: number };
+export const NUM_CUBE_SIDES = 6;
+export type Cube = { xPos: number; yPos: number; zPos: number };
 
 export const allCubes: Cube[] = input.split("\n").map((line) => {
   const [xPos, yPos, zPos] = line.split(",").map((x) => parseInt(x.trim()));
@@ -25,4 +26,33 @@ export function getNumberOfSidesExposed(cube: Cube): number {
 
   // The number of exposed sides is the total number of sides minus the number of covered sides
   return adjacentSides.length - numCoveredSides;
+}
+
+export function getNumAirDroplets(): number {
+  const minX: number = Math.min(...allCubes.map((cube) => cube.xPos));
+  const maxX: number = Math.max(...allCubes.map((cube) => cube.xPos));
+
+  const minY: number = Math.min(...allCubes.map((cube) => cube.yPos));
+  const maxY: number = Math.max(...allCubes.map((cube) => cube.yPos));
+
+  const minZ: number = Math.min(...allCubes.map((cube) => cube.zPos));
+  const maxZ: number = Math.max(...allCubes.map((cube) => cube.zPos));
+
+  let counter = 0;
+
+  // Loop through all the positions (of the cubular space from the origin to the furthest cube)
+  for (let xPos = minX; xPos <= maxX; xPos++) {
+    for (let yPos = minY; yPos <= maxY; yPos++) {
+      for (let zPos = minZ; zPos <= maxZ; zPos++) {
+        // The current position to check
+        const cubeToCheck: Cube = { xPos, yPos, zPos };
+        // Not a ube occuped, but is fully covered
+        if (!allCubes.includes(cubeToCheck) && getNumberOfSidesExposed(cubeToCheck) === 0) {
+          counter++;
+        }
+      }
+    }
+  }
+
+  return counter;
 }
