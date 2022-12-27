@@ -8,13 +8,9 @@ type Monkey = {
   operation: "+" | "-" | "*" | "/";
 };
 
-type MonkeyMap = {
-  [name: string]: Monkey;
-};
-
 // Parse the input into an object array
-const initialMonkeys: Monkey[] = input.split("\n").map((monkey) => {
-  const [name, value] = monkey.split(": ").map((x) => x.trim());
+const monkeys: Monkey[] = input.split("\n").map((monkey) => {
+  const [name, value] = monkey.split(": ");
   const [left, operator, right] = value.split(" ");
 
   return {
@@ -26,23 +22,15 @@ const initialMonkeys: Monkey[] = input.split("\n").map((monkey) => {
   } as Monkey;
 });
 
-// Convert the object array to a map
-export const monkeys: MonkeyMap = initialMonkeys.reduce((monkeyMap: MonkeyMap, currMonkey: Monkey) => {
-  return {
-    ...monkeyMap,
-    [currMonkey.name]: currMonkey,
-  };
-}, {});
-
 export function getMonkeyValue(monkeyName: string): number {
-  const monkey: Monkey = monkeys[monkeyName];
+  const monkey: Monkey = monkeys.find((monkey) => monkey.name === monkeyName)!;
 
   // Already a numeric value
   if (monkey.operation === undefined) {
     return monkey.value;
   }
 
-  // Otherwise need to evaluate both sides and the expression
+  // Otherwise need to evaluate both sides (the expression)
   const left = getMonkeyValue(monkey.left);
   const right = getMonkeyValue(monkey.right);
 
