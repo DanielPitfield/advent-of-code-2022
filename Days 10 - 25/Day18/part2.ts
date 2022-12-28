@@ -1,19 +1,16 @@
-import { input } from "./input";
-import { getMaximumPosition, getMinimumPosition } from "./utils";
+import { allCubes, getMaximumPosition, getMinimumPosition } from "./utils";
 
-let squarePositions = new Set<string>();
+const MIN = getMinimumPosition();
+const MAX = getMaximumPosition();
 
-input.split("\n").map((line) => {
-  let [x, y, z] = line.split(",").map((n) => parseInt(n));
-  squarePositions.add(`${x},${y},${z}`);
+const cubesAsStrings = allCubes.map((cube) => {
+  return `${cube.xPos},${cube.yPos},${cube.zPos}`;
 });
+const squarePositions = new Set(cubesAsStrings);
 
-const MIN_POSITION = getMinimumPosition();
-const MAX_POSITION = getMaximumPosition();
-
-function countAffectedCubes (x: number, y: number, z: number) {
+function countAffectedCubes(x: number, y: number, z: number) {
   let count = 0;
-
+  
   if (squarePositions.has(`${x + 1},${y},${z}`)) count++;
   if (squarePositions.has(`${x - 1},${y},${z}`)) count++;
   if (squarePositions.has(`${x},${y + 1},${z}`)) count++;
@@ -22,7 +19,7 @@ function countAffectedCubes (x: number, y: number, z: number) {
   if (squarePositions.has(`${x},${y},${z - 1}`)) count++;
 
   return count;
-};
+}
 
 let visited = new Set();
 let surfaceArea = 0;
@@ -41,16 +38,16 @@ while (queue.length > 0) {
     continue;
   }
 
-  if (x < MIN_POSITION - 1 || y < MIN_POSITION - 1 || z < MIN_POSITION - 1) {
+  if (x < MIN - 1 || y < MIN - 1 || z < MIN - 1) {
     continue;
   }
 
-  if (x > MAX_POSITION + 1 || y > MAX_POSITION + 1 || z > MAX_POSITION + 1) {
+  if (x > MAX + 1 || y > MAX + 1 || z > MAX + 1) {
     continue;
   }
 
   visited.add(`${x},${y},${z}`);
-  
+
   surfaceArea += countAffectedCubes(x, y, z);
 
   queue.push({ x: x + 1, y, z });
