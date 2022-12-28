@@ -21,16 +21,15 @@ export function getAllAdjacentCubes(cube: Cube): Cube[] {
   return [side1, side2, side3, side4, side5, side6];
 }
 
+// How many of the cube's adjacent cubes are found within allCubes?
+export function getNumAdjacentCubesPresent(cube: Cube) {
+  const adjacentCubes = getAllAdjacentCubes(cube);
+  return allCubesStringified.filter((cube) => adjacentCubes.map((cube) => JSON.stringify(cube)).includes(cube)).length;
+}
+
+// The number of exposed sides is the total number of sides minus the number of covered sides
 export function getNumberOfSidesExposed(cube: Cube): number {
-  const adjacentCubes: Cube[] = getAllAdjacentCubes(cube);
-
-  // How many of these adjacent sides are found within allCubes?
-  const numCoveredSides: number = allCubesStringified.filter((cube) =>
-    adjacentCubes.map((cube) => JSON.stringify(cube)).includes(cube)
-  ).length;
-
-  // The number of exposed sides is the total number of sides minus the number of covered sides
-  return adjacentCubes.length - numCoveredSides;
+  return NUM_CUBE_SIDES - getNumAdjacentCubesPresent(cube);
 }
 
 export function isCubeWithin(cubeArray: Cube[], cubeToCheck: Cube): boolean {
