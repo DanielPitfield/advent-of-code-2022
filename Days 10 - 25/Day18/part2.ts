@@ -20,7 +20,12 @@ let queue: Cube[] = [origin];
 
 // Until the queue is empty
 while (queue.length > 0) {
-  const currentCube: Cube = queue.shift()!;
+  const currentCube: Cube | undefined = queue.shift();
+
+  // The current cube couldn't be found
+  if (!currentCube) {
+    continue;
+  }
 
   // Already processed this cube
   if (isCubeWithin(visitedCubes, currentCube)) {
