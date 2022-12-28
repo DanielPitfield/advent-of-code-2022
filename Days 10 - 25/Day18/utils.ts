@@ -35,3 +35,19 @@ export function getNumberOfSidesExposed(cube: Cube): number {
 export function isCubeWithin(cubeArray: Cube[], cubeToCheck: Cube): boolean {
   return cubeArray.map((cube) => JSON.stringify(cube)).some((cube) => cube === JSON.stringify(cubeToCheck));
 }
+
+export function getMinimumPosition(): number {
+  const minX: number = Math.min(...allCubes.map((cube) => cube.xPos));
+  const minY: number = Math.min(...allCubes.map((cube) => cube.yPos));
+  const minZ: number = Math.min(...allCubes.map((cube) => cube.zPos));
+
+  return Math.min(minX, minY, minZ);
+}
+
+export function getMaximumPosition(): number {
+  const maxX: number = Math.max(...allCubes.map((cube) => cube.xPos));
+  const maxY: number = Math.max(...allCubes.map((cube) => cube.yPos));
+  const maxZ: number = Math.max(...allCubes.map((cube) => cube.zPos));
+
+  return Math.max(maxX, maxY, maxZ);
+}
