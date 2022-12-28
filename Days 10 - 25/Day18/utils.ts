@@ -41,7 +41,7 @@ export function getMinimumPosition(): number {
   const minY: number = Math.min(...allCubes.map((cube) => cube.yPos));
   const minZ: number = Math.min(...allCubes.map((cube) => cube.zPos));
 
-  return Math.min(minX, minY, minZ);
+  return Math.min(minX, minY, minZ) - 1;
 }
 
 export function getMaximumPosition(): number {
@@ -49,5 +49,5 @@ export function getMaximumPosition(): number {
   const maxY: number = Math.max(...allCubes.map((cube) => cube.yPos));
   const maxZ: number = Math.max(...allCubes.map((cube) => cube.zPos));
 
-  return Math.max(maxX, maxY, maxZ);
+  return Math.max(maxX, maxY, maxZ) + 1;
 }

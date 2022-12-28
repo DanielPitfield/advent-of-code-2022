@@ -1,48 +1,53 @@
-import { allCubes, getMaximumPosition, getMinimumPosition, getNumAdjacentCubesPresent } from "./utils";
+import {
+  allCubes,
+  Cube,
+  getAllAdjacentCubes,
+  getMaximumPosition,
+  getMinimumPosition,
+  getNumAdjacentCubesPresent,
+} from "./utils";
 
 const MIN = getMinimumPosition();
 const MAX = getMaximumPosition();
 
-const allCubesSet: Set<string> = new Set(allCubes.map((cube) => {
-  return `${cube.xPos},${cube.yPos},${cube.zPos}`;
-}));
+const allCubesSet: Set<string> = new Set(
+  allCubes.map((cube) => {
+    return `${cube.xPos},${cube.yPos},${cube.zPos}`;
+  })
+);
 
 let surfaceArea = 0;
 let visitedCubePositions: Set<string> = new Set();
 
-
-const origin = { x: 0, y: 0, z: 0 };
-let queue = [origin];
+const origin: Cube = { xPos: 0, yPos: 0, zPos: 0 };
+let queue: Cube[] = [origin];
 
 while (queue.length > 0) {
-  let { x, y, z } = queue.shift()!;
+  let currentCube: Cube = queue.shift()!;
+  const currentCubeStringified = `${currentCube.xPos},${currentCube.yPos},${currentCube.zPos}`;
 
-  if (visitedCubePositions.has(`${x},${y},${z}`)) {
+  if (visitedCubePositions.has(currentCubeStringified)) {
     continue;
   }
 
-  if (allCubesSet.has(`${x},${y},${z}`)) {
+  if (allCubesSet.has(currentCubeStringified)) {
     continue;
   }
 
-  if (x < MIN - 1 || y < MIN - 1 || z < MIN - 1) {
+  if (currentCube.xPos < MIN || currentCube.yPos < MIN || currentCube.zPos < MIN) {
     continue;
   }
 
-  if (x > MAX + 1 || y > MAX + 1 || z > MAX + 1) {
+  if (currentCube.xPos > MAX || currentCube.yPos > MAX || currentCube.zPos > MAX) {
     continue;
   }
 
-  visitedCubePositions.add(`${x},${y},${z}`);
+  visitedCubePositions.add(currentCubeStringified);
 
-  surfaceArea += getNumAdjacentCubesPresent({ xPos: x, yPos: y, zPos: z });
+  surfaceArea += getNumAdjacentCubesPresent(currentCube);
+  const adjacentCubes = getAllAdjacentCubes(currentCube);
 
-  queue.push({ x: x + 1, y, z });
-  queue.push({ x: x - 1, y, z });
-  queue.push({ x, y: y + 1, z });
-  queue.push({ x, y: y - 1, z });
-  queue.push({ x, y, z: z + 1 });
-  queue.push({ x, y, z: z - 1 });
+  queue = queue.concat(adjacentCubes);
 }
 
 console.log(surfaceArea);
