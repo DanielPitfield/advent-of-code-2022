@@ -7,6 +7,7 @@ import {
   getNumAdjacentCubesPresent,
 } from "./utils";
 
+// The minimum and maximum values allowed for the cube to be an air droplet
 const MIN = getMinimumPosition();
 const MAX = getMaximumPosition();
 
@@ -16,38 +17,40 @@ const allCubesSet: Set<string> = new Set(
   })
 );
 
-let surfaceArea = 0;
-let visitedCubePositions: Set<string> = new Set();
+let exteriorSurfaceArea: number = 0;
+const visitedCubePositions: Set<string> = new Set();
 
 const origin: Cube = { xPos: 0, yPos: 0, zPos: 0 };
 let queue: Cube[] = [origin];
 
+// Until the queue is empty
 while (queue.length > 0) {
-  let currentCube: Cube = queue.shift()!;
+  const currentCube: Cube = queue.shift()!;
   const currentCubeStringified = `${currentCube.xPos},${currentCube.yPos},${currentCube.zPos}`;
 
+  // Already processed this cube
   if (visitedCubePositions.has(currentCubeStringified)) {
     continue;
   }
 
+  // The cube is within the interior of the droplet structure
   if (allCubesSet.has(currentCubeStringified)) {
     continue;
   }
 
-  if (currentCube.xPos < MIN || currentCube.yPos < MIN || currentCube.zPos < MIN) {
+  // Cube is out of bounds
+  if ([currentCube.xPos, currentCube.yPos, currentCube.zPos].some(position => position < MIN || position > MAX))  {
     continue;
   }
 
-  if (currentCube.xPos > MAX || currentCube.yPos > MAX || currentCube.zPos > MAX) {
-    continue;
-  }
+  // This cube is an air droplet, add it's surface area to the sum
+  exteriorSurfaceArea += getNumAdjacentCubesPresent(currentCube);
 
   visitedCubePositions.add(currentCubeStringified);
 
-  surfaceArea += getNumAdjacentCubesPresent(currentCube);
   const adjacentCubes = getAllAdjacentCubes(currentCube);
-
+  // Push the adjacent cubes of the current cube to the queue
   queue = queue.concat(adjacentCubes);
 }
 
-console.log(surfaceArea);
+console.log(exteriorSurfaceArea)
