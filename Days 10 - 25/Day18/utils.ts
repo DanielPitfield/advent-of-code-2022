@@ -8,8 +8,9 @@ export const allCubes: Cube[] = input.split("\n").map((line) => {
   return { xPos, yPos, zPos };
 });
 
+export const allCubesStringified: string[] = allCubes.map((cube) => JSON.stringify(cube));
+
 export function getAllAdjacentCubes(cube: Cube): Cube[] {
-  // The adjacent positions of the cube
   const side1: Cube = { ...cube, xPos: cube.xPos + 1 };
   const side2: Cube = { ...cube, xPos: cube.xPos - 1 };
   const side3: Cube = { ...cube, yPos: cube.yPos + 1 };
@@ -24,9 +25,9 @@ export function getNumberOfSidesExposed(cube: Cube): number {
   const adjacentCubes: Cube[] = getAllAdjacentCubes(cube);
 
   // How many of these adjacent sides are found within allCubes?
-  const numCoveredSides: number = allCubes
-    .map((cube) => JSON.stringify(cube))
-    .filter((cube) => adjacentCubes.map((cube) => JSON.stringify(cube)).includes(cube)).length;
+  const numCoveredSides: number = allCubesStringified.filter((cube) =>
+    adjacentCubes.map((cube) => JSON.stringify(cube)).includes(cube)
+  ).length;
 
   // The number of exposed sides is the total number of sides minus the number of covered sides
   return adjacentCubes.length - numCoveredSides;

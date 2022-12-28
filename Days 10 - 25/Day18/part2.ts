@@ -1,4 +1,11 @@
-import { allCubes, getMaximumPosition, getMinimumPosition } from "./utils";
+import {
+  allCubes,
+  allCubesStringified,
+  Cube,
+  getAllAdjacentCubes,
+  getMaximumPosition,
+  getMinimumPosition,
+} from "./utils";
 
 const MIN = getMinimumPosition();
 const MAX = getMaximumPosition();
@@ -8,17 +15,11 @@ const cubesAsStrings = allCubes.map((cube) => {
 });
 const squarePositions = new Set(cubesAsStrings);
 
-function countAffectedCubes(x: number, y: number, z: number) {
-  let count = 0;
+function getNumAdjacentCubesPresent(cube: Cube) {
+  const adjacentCubes = getAllAdjacentCubes(cube);
   
-  if (squarePositions.has(`${x + 1},${y},${z}`)) count++;
-  if (squarePositions.has(`${x - 1},${y},${z}`)) count++;
-  if (squarePositions.has(`${x},${y + 1},${z}`)) count++;
-  if (squarePositions.has(`${x},${y - 1},${z}`)) count++;
-  if (squarePositions.has(`${x},${y},${z + 1}`)) count++;
-  if (squarePositions.has(`${x},${y},${z - 1}`)) count++;
-
-  return count;
+  // How many of these adjacent sides are found within allCubes?
+  return allCubesStringified.filter((cube) => adjacentCubes.map((cube) => JSON.stringify(cube)).includes(cube)).length;
 }
 
 let visited = new Set();
@@ -48,7 +49,7 @@ while (queue.length > 0) {
 
   visited.add(`${x},${y},${z}`);
 
-  surfaceArea += countAffectedCubes(x, y, z);
+  surfaceArea += getNumAdjacentCubesPresent({ xPos: x, yPos: y, zPos: z });
 
   queue.push({ x: x + 1, y, z });
   queue.push({ x: x - 1, y, z });
