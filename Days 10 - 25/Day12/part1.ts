@@ -7,24 +7,25 @@ let endPosition: Position = { xPos: 0, yPos: 0 };
 // What character code is "a"?
 const charCodeOffset: number = "a".charCodeAt(0);
 
-const elevationMap: number[][] = input.split("\n").map((row, yPos) =>
-  row.split("").map((value, xPos) => {
-    // Value is the starting position, make this the lowest possible elevation
-    if (value === "S") {
+const lines = input.split("\n");
+
+const elevationMap: number[][] = Array(input.length)
+  .fill(0)
+  .map((_) => new Array(input[0].length));
+
+lines.forEach((row, xPos) => {
+  row.split("").forEach((square, yPos) => {
+    if (square === "S") {
       startPosition = { xPos, yPos };
-      value = "a";
-    }
-
-    // Value is ending position, make this the highest possible elevation
-    if (value === "E") {
+      elevationMap[xPos][yPos] = "a".charCodeAt(0) - charCodeOffset;
+    } else if (square === "E") {
       endPosition = { xPos, yPos };
-      value = "z";
+      elevationMap[xPos][yPos] = "z".charCodeAt(0) - charCodeOffset;
+    } else {
+      elevationMap[xPos][yPos] = square.charCodeAt(0) - charCodeOffset;
     }
-
-    // a-z, 0-26
-    return value.charCodeAt(0) - charCodeOffset;
-  })
-);
+  });
+});
 
 function getNeighbors(position: Position): Position[] {
   const offsets: Position[] = [
@@ -48,22 +49,18 @@ function getNeighbors(position: Position): Position[] {
 
 function getShortestPathSteps(): number | null {
   let queue: [Position, number][] = [[startPosition, 0]];
-  const visitedPositions: Position[] = [];
+  const visited: Set<string> = new Set();
 
   while (queue.length) {
     const [currentPosition, steps] = queue.shift()!;
 
     // Already visited the currentPosition
-    if (
-      visitedPositions
-        .map((position) => JSON.stringify(position))
-        .some((position) => position === JSON.stringify(currentPosition))
-    ) {
+    if (visited.has(JSON.stringify(currentPosition))) {
       continue;
     }
 
     // Keep track this position has been visited
-    visitedPositions.push(currentPosition);
+    visited.add(JSON.stringify(currentPosition));
 
     // Reached the destination, return how many steps to get there
     if (JSON.stringify(currentPosition) === JSON.stringify(endPosition)) {
@@ -77,7 +74,8 @@ function getShortestPathSteps(): number | null {
     The value of the neigbour must be either lower, equal or (at most) 1 higher than the currentPosition
     */
     const possibleMoves: Position[] = neighbors.filter(
-      (position) => elevationMap[position.xPos][position.yPos] <= elevationMap[currentPosition.xPos][currentPosition.yPos] + 1
+      (position) =>
+        elevationMap[position.xPos][position.yPos] <= elevationMap[currentPosition.xPos][currentPosition.yPos] + 1
     );
 
     // Add these possible moves to the queue
