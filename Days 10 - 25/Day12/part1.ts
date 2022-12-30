@@ -48,22 +48,18 @@ function getNeighbors(position: Position): Position[] {
 
 function getShortestPathSteps(): number | null {
   let queue: [Position, number][] = [[startPosition, 0]];
-  const visitedPositions: Position[] = [];
+  const visitedPositions: Set<string> = new Set();
 
   while (queue.length) {
     const [currentPosition, steps] = queue.shift()!;
 
     // Already visited the currentPosition
-    if (
-      visitedPositions
-        .map((position) => JSON.stringify(position))
-        .some((position) => position === JSON.stringify(currentPosition))
-    ) {
+    if (visitedPositions.has(JSON.stringify(currentPosition))) {
       continue;
     }
 
     // Keep track this position has been visited
-    visitedPositions.push(currentPosition);
+    visitedPositions.add(JSON.stringify(currentPosition));
 
     // Reached the destination, return how many steps to get there
     if (JSON.stringify(currentPosition) === JSON.stringify(endPosition)) {
@@ -77,7 +73,8 @@ function getShortestPathSteps(): number | null {
     The value of the neigbour must be either lower, equal or (at most) 1 higher than the currentPosition
     */
     const possibleMoves: Position[] = neighbors.filter(
-      (position) => elevationMap[position.xPos][position.yPos] <= elevationMap[currentPosition.xPos][currentPosition.yPos] + 1
+      (position) =>
+        elevationMap[position.xPos][position.yPos] <= elevationMap[currentPosition.xPos][currentPosition.yPos] + 1
     );
 
     // Add these possible moves to the queue
