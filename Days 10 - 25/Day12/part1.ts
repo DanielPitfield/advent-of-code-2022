@@ -4,8 +4,12 @@ import { input } from "./input";
 let startPosition: Position = { xPos: 0, yPos: 0 };
 let endPosition: Position = { xPos: 0, yPos: 0 };
 
+// What is the symbol on the provided elevation map data for the lowest elevation?
+const LOWEST_ELEVATION_SYMBOL: string = "a";
 // What character code is "a"?
-const charCodeOffset: number = "a".charCodeAt(0);
+const charCodeOffset: number = LOWEST_ELEVATION_SYMBOL.charCodeAt(0);
+// What would be the numeric elevation for the lowest elevation?
+const LOWEST_ELEVATION_VALUE = LOWEST_ELEVATION_SYMBOL.charCodeAt(0) - charCodeOffset;
 
 const elevationMap: number[][] = input.split("\n").map((row, xPos) =>
   row.split("").map((value, yPos) => {
@@ -46,8 +50,15 @@ function getNeighbors(position: Position): Position[] {
   });
 }
 
-function getShortestPathSteps(): number | null {
-  let queue: [Position, number][] = [[startPosition, 0]];
+function getShortestPathSteps(pathConfig: { isPathGoingUp: boolean }): number | null {
+  /*
+  If the path is going from the lowest elevation to the highest elevation,
+  Then start at the original start position (lowest elevation),
+  Otherwise, start at the end position (highest elevation)
+  */
+  const pathStart: Position = pathConfig.isPathGoingUp ? startPosition : endPosition;
+
+  let queue: [Position, number][] = [[pathStart, 0]];
   const visitedPositions: Set<string> = new Set();
 
   while (queue.length) {
@@ -61,21 +72,33 @@ function getShortestPathSteps(): number | null {
     // Keep track this position has been visited
     visitedPositions.add(JSON.stringify(currentPosition));
 
-    // Reached the destination, return how many steps to get there
-    if (JSON.stringify(currentPosition) === JSON.stringify(endPosition)) {
+    // Path is going up and have reached the highest elevation
+    if (pathConfig.isPathGoingUp && JSON.stringify(currentPosition) === JSON.stringify(endPosition)) {
+      return steps;
+    }
+
+    // Path is going down and have reached a point of the lowest elevation
+    if (
+      !pathConfig.isPathGoingUp &&
+      elevationMap[currentPosition.xPos][currentPosition.yPos] === LOWEST_ELEVATION_VALUE
+    ) {
       return steps;
     }
 
     // Get all the neighbours of the currentPosition
     const neighbors: Position[] = getNeighbors(currentPosition);
-    /*
-    Filter the neighbours which are able to be moved to next
-    The value of the neigbour must be either lower, equal or (at most) 1 higher than the currentPosition
-    */
-    const possibleMoves: Position[] = neighbors.filter(
-      (position) =>
-        elevationMap[position.xPos][position.yPos] <= elevationMap[currentPosition.xPos][currentPosition.yPos] + 1
-    );
+
+    const possibleMoves: Position[] = neighbors.filter((position) => {
+      if (pathConfig.isPathGoingUp) {
+        return (
+          // The value of the neigbour must be either lower, equal or (at most) 1 higher than the currentPosition
+          elevationMap[position.xPos][position.yPos] <= elevationMap[currentPosition.xPos][currentPosition.yPos] + 1
+        );
+      }
+
+      // In reverse
+      return elevationMap[position.xPos][position.yPos] >= elevationMap[currentPosition.xPos][currentPosition.yPos] - 1;
+    });
 
     // Add these possible moves to the queue
     queue = queue.concat(possibleMoves.map((position) => [position, steps + 1]));
@@ -84,4 +107,4 @@ function getShortestPathSteps(): number | null {
   return null;
 }
 
-console.log(getShortestPathSteps());
+const result = getShortestPathSteps({isPathGoingUp: true});
