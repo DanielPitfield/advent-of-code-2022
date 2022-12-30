@@ -7,8 +7,8 @@ let endPosition: Position = { xPos: 0, yPos: 0 };
 // What character code is "a"?
 const charCodeOffset: number = "a".charCodeAt(0);
 
-const elevationMap: number[][] = input.split("\n").map((row, yPos) =>
-  row.split("").map((value, xPos) => {
+const elevationMap: number[][] = input.split("\n").map((row, xPos) =>
+  row.split("").map((value, yPos) => {
     // Value is the starting position, make this the lowest possible elevation
     if (value === "S") {
       startPosition = { xPos, yPos };
